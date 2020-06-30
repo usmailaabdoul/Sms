@@ -1,0 +1,36 @@
+.cards {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.cardWrapper {
+  background-color: #fcfbfb;
+  display: flex;
+  border-radius: 5px;
+  flex-direction: column;
+  width: 12rem;
+  margin-top: 2rem;
+  height: 10rem;
+
+  .cardWrapperTitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      font-size: 18px;
+      color: #444444;
+    } 
+  }
+
+  .cardWrapperIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #fcfbfb;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+}

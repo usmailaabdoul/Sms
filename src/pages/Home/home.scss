@@ -9,23 +9,6 @@
   height: 100%;
   align-self: center;
   overflow: auto;
-
-  
-  // padding: 20px;
-
-  // div {
-  //   margin: 20px;
-  //   padding-top: 5px;
-  //   padding-bottom: 5px;
-  //   border-radius: 10px;
-  //   background-color: #02d7ff;
-  //   // display: block;
-  //   display: flex;
-  //   justify-content: center;
-  // }
-  // h3 {
-  //   color: white;    
-  // }
 }
 
 .name {
@@ -67,10 +50,34 @@
 
 /* Page content. The value of the margin-left property should match the value of the sidebar's width property */
 div.content {
-  margin-left: 250px;
-  // padding: 1px 16px;
-  height: 100%;
+  margin-left: 245px;
+  margin-top: 60px;
+  height: 1000px;
+  background-color: #e4e9f0;
+
+  div.dashboard {
+    background-color: #fcfbfb;
+    padding: 30px 30px 30px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+
+    .dashboard-text {
+      font-size: 22px;
+      color: #000000ad;
+    }
+
+    .dashboard-nav {
+      font-size: 14px;
+      color: #000000ad;
+    }
+  }
+
+  div.bodyContent {
+    padding: 10px 0px 0px 20px;
+  }
 }
+
 
 /* On screens that are less than 700px wide, make the sidebar into a topbar */
 @media screen and (max-width: 700px) {

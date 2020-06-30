@@ -9,8 +9,9 @@ import {
   FaTable,
   FaWpforms,
   FaAngleDown,
+  FaFileSignature
 } from "react-icons/fa";
-import { Col, Image, Nav, Dropdown, NavItem, NavLink } from 'react-bootstrap';
+import { Col, Image } from 'react-bootstrap';
 import profileImg from '../../res/img/profileImg.jpg';
 
 import './sidebar.scss';
@@ -19,16 +20,41 @@ class Sidebar extends Component {
   constructor() {
     super();
     this.state = {
-      statistic: true,
-      studentReport: false,
-      staffReport: false,
-      forms: false,
-      tables: false,
+      main: true,
+      report: false,
+      route: 1,
     }
   }
 
+  handleNavColor(id) {
+    const { main, report } = this.state;
+
+    switch (id) {
+      case 'Main':
+        return this.setState({ route: 1, main: !main, report: false });
+      case 'Students':
+        return this.setState({ route: 2, main: false, report: false });
+      case 'Staff':
+        return this.setState({ route: 3, main: false, report: false });
+      case 'Fee':
+        return this.setState({ route: 4, main: false, report: false });
+      case 'Results':
+        return this.setState({ route: 5, main: false, report: false });
+      case 'Reports':
+        return this.setState({ route: 6, main: false, report: !report });
+      default:
+        return this.setState({ route: 1, main: true, report: false });
+    }
+  }
+
+  handleRoute(route) {
+    this.handleNavColor(route)
+
+    this.props.changeRoute(route)
+  }
+  
   render() {
-    const { statistic, studentReport, staffReport, forms, tables } = this.state;
+    const { main, route, report } = this.state;
     return (
       <div>
         <div className="profileWrapper">
@@ -41,36 +67,38 @@ class Sidebar extends Component {
               <span style={{ fontSize: '16px' }}> @admin</span>
             </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center' ,marginTop: '1.5rem', marginLeft: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', marginLeft: '1rem' }}>
             <div
-              style={{ marginRight: '2rem', padding: '5px 7px', fontSize: '18px', color: 'white' }}
+              style={{ marginRight: '2rem', padding: '5px 10px', fontSize: '18px', color: 'white', borderRadius: '5px' }}
               className='grow shadow pointer'>
               <FaPowerOff /></div>
             <div
-              style={{ marginRight: '2rem', padding: '5px 7px', fontSize: '18px', color: 'white' }}
+              style={{ marginRight: '2rem', padding: '5px 10px', fontSize: '18px', color: 'white', borderRadius: '5px' }}
               className='grow shadow pointer'>
               <FaUser /></div>
             <div
-              style={{ marginRight: '2rem', padding: '5px 7px', fontSize: '18px', color: 'white' }}
+              style={{ marginRight: '2rem', padding: '5px 10px', fontSize: '18px', color: 'white', borderRadius: '5px' }}
               className='grow shadow pointer'>
               <FaCog /></div>
           </div>
         </div>
 
-        <div>
+        <div style={{ paddingBottom: '5rem' }}>
           <div className="menu shadow-1" style={{ padding: '10px 15px', marginBottom: '10px', fontSize: '20px', color: '#000000cd', borderBottomColor: '#ccc' }}>Menu</div>
 
           <div style={{ margin: '0px 10px 0px 15px' }}>
             <div>
               <div
                 className='pointer'
-                onClick={() => this.setState({ statistic: !statistic })}
-                style={{ color: '#00b5cc', display: 'flex', justifyContent: 'space-between' }}>
+                onClick={() => {
+                  this.handleRoute('Main')
+                }}
+                style={{ color: route === 1 ? '#00b5cc' : '#000000ad', display: 'flex', justifyContent: 'space-between' }}>
                 <div>
-                  <span style={{ position: 'relative', bottom: 2 }}><FaCog /></span> Statistics
+                  <span style={{ position: 'relative', bottom: 2 }}><FaCog /></span> Main
                 </div>
                 {
-                  statistic ?
+                  main ?
                     <div><FaAngleDown /></div>
                     :
                     <div><FaAngleRight /></div>
@@ -78,7 +106,7 @@ class Sidebar extends Component {
               </div>
               <div style={{ marginBottom: '20px' }}>
                 {
-                  statistic ?
+                  main ?
                     <div>
                       <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
                         Students stats
@@ -96,51 +124,59 @@ class Sidebar extends Component {
               </div>
             </div>
 
-            <div>
-              <div
-                className='pointer'
-                onClick={() => this.setState({ studentReport: !studentReport })}
-                style={{ color: '#000000ad', display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                  <span style={{ position: 'relative', bottom: 2 }}><FaUserGraduate /></span> Students report
+            <div
+              className='pointer'
+              onClick={() => this.handleRoute('Students')}
+              style={{ color: route === 2 ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
+              <div>
+                <span style={{ position: 'relative', bottom: 2 }}><FaUserGraduate /></span> Students
                   </div>
-                {
-                  studentReport ?
-                    <div><FaAngleDown /></div>
-                    :
-                    <div><FaAngleRight /></div>
-                }
+              <div><FaAngleRight /></div>
+            </div>
+
+            <div
+              className='pointer'
+              onClick={() => this.handleRoute('Staff')}
+              style={{ color: route === 3 ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
+              <div>
+                <span style={{ position: 'relative', bottom: 2 }}><FaCreativeCommonsBy /></span> Staff
+                </div>
+              <div><FaAngleRight /></div>
+            </div>
+
+            <div
+              className='pointer'
+              onClick={() => this.handleRoute('Fee')}
+              style={{ color: route === 4 ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
+              <div>
+                <span style={{ position: 'relative', bottom: 2 }}><FaWpforms /></span> Fee
               </div>
-              <div style={{ marginBottom: '20px' }}>
-                {
-                  studentReport ?
-                    <div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Students stats
-                      </div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Teacher stats
-                      </div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Staff stats
-                      </div>
-                    </div>
-                    :
-                    null
-                }
+              <div><FaAngleRight /></div>
+            </div>
+
+
+            <div
+              className='pointer'
+              onClick={() => this.handleRoute('Results')}
+              style={{ color: route === 5 ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
+              <div>
+                <span style={{ position: 'relative', bottom: 2 }}><FaTable /></span> Results
               </div>
+              <div><FaAngleRight /></div>
             </div>
 
             <div>
               <div
                 className='pointer'
-                onClick={() => this.setState({ staffReport: !staffReport })}
-                style={{ color: '#000000ad', display: 'flex', justifyContent: 'space-between' }}>
+                onClick={() => {
+                  this.handleRoute('Reports')
+                }}
+                style={{ color: route === 6 ? '#00b5cc' : '#000000ad', display: 'flex', justifyContent: 'space-between' }}>
                 <div>
-                  <span style={{ position: 'relative', bottom: 2 }}><FaCreativeCommonsBy /></span> Staff report
+                  <span style={{ position: 'relative', bottom: 2 }}><FaFileSignature /></span> Reports
                 </div>
                 {
-                  staffReport ?
+                  report ?
                     <div><FaAngleDown /></div>
                     :
                     <div><FaAngleRight /></div>
@@ -148,16 +184,25 @@ class Sidebar extends Component {
               </div>
               <div style={{ marginBottom: '20px' }}>
                 {
-                  staffReport ?
+                  report ?
                     <div>
                       <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Students stats
+                        Details of Teaching staff
                       </div>
                       <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Teacher stats
+                        Details of non Teaching staff
                       </div>
                       <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Staff stats
+                        class students details
+                      </div>
+                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
+                        Students details related admission date
+                      </div>
+                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
+                        Students details according to names
+                      </div>
+                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
+                        Teacher report based on joining date
                       </div>
                     </div>
                     :
@@ -165,77 +210,6 @@ class Sidebar extends Component {
                 }
               </div>
             </div>
-
-            <div>
-              <div
-                className='pointer'
-                onClick={() => this.setState({ forms: !forms })}
-                style={{ color: '#000000ad', display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                  <span style={{ position: 'relative', bottom: 2 }}><FaWpforms /></span> Forms
-              </div>
-                {
-                  forms ?
-                    <div><FaAngleDown /></div>
-                    :
-                    <div><FaAngleRight /></div>
-                }
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                {
-                  forms ?
-                    <div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Students stats
-                      </div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Teacher stats
-                      </div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Staff stats
-                      </div>
-                    </div>
-                    :
-                    null
-                }
-              </div>
-            </div>
-
-            <div>
-              <div 
-                className='pointer' 
-                onClick={() => this.setState({ tables: !tables })}
-                style={{ color: '#000000ad', display: 'flex', justifyContent: 'space-between' }}>
-                <div>
-                  <span style={{ position: 'relative', bottom: 2 }}><FaTable /></span> Tables
-              </div>
-                {
-                  tables ?
-                    <div><FaAngleDown /></div>
-                    :
-                    <div><FaAngleRight /></div>
-                }
-              </div>
-              <div style={{ marginBottom: '20px' }}>
-                {
-                  tables ?
-                    <div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Students stats
-                      </div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Teacher stats
-                      </div>
-                      <div className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                        Staff stats
-                      </div>
-                    </div>
-                    :
-                    null
-                }
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

@@ -1,17 +1,25 @@
 import React, { Component } from 'react';
-import { FaListAlt, FaSearch } from "react-icons/fa";
+import { FaListAlt, FaSearch, FaAngleRight } from "react-icons/fa";
 import { Navbar, Nav, OverlayTrigger, Popover } from 'react-bootstrap';
 
 import './home.scss';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import Body from '../Body/Body';
 
 class Home extends Component {
 
+  constructor() {
+    super();
+    this.state = {
+      route: 'Main'
+    }
+  }
   render() {
+    const { route } = this.state;
 
     return (
       <div>
-        <Navbar collapseOnSelect expand="lg" bg="light" variant="light" className='shadow'>
+        <Navbar fixed="top" collapseOnSelect expand="lg" bg="light" variant="light" className='shadow-1'>
           <Navbar.Brand>
             <div className='name'>
               School Ms
@@ -24,7 +32,7 @@ class Home extends Component {
             <Nav>
 
               <Nav.Link href="#memes">
-                <div style={{fontSize: '1.2rem', marginRight: '20px'}}><FaSearch /></div>
+                <div style={{ fontSize: '1.2rem', marginRight: '20px' }}><FaSearch /></div>
               </Nav.Link>
 
               <OverlayTrigger
@@ -40,20 +48,32 @@ class Home extends Component {
                 }
               >
                 <Nav.Link eventKey={2} href="#deets">
-                  <div  style={{fontSize: '1.2rem', marginRight: '20px'}}><FaListAlt /></div>
+                  <div style={{ fontSize: '1.2rem', marginRight: '20px' }}><FaListAlt /></div>
                 </Nav.Link>
               </OverlayTrigger>
 
-              
+
             </Nav>
           </Navbar.Collapse>
         </Navbar>
         <div className="sidebar shadow">
-          <Sidebar />
+          <Sidebar
+            changeRoute={(route) => this.setState({ route })}
+          />
         </div>
 
         <div className="content">
-          hello h hd hh dhdh h hdhdhd
+          <div className='dashboard shadow'>
+            <div className='dashboard-text'>
+              Dashboard
+            </div>
+            <div className='dashboard-nav'>
+              Home <FaAngleRight /> Dashboard <FaAngleRight /> {route}
+            </div>
+          </div>
+          <div className='bodyContent'>
+            <Body route={route} />
+          </div>
         </div>
       </div>
     )
