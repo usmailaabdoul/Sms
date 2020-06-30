@@ -4,6 +4,7 @@ import Students from '../Students/Students';
 import Staff from '../Staff/Staff';
 import Fee from '../Fee/Fee';
 import Results from '../Results/Results';
+import Main from '../Main/Main';
 
 import './body.scss';
 
@@ -35,7 +36,7 @@ class Body extends Component {
     } 
 
     if (route === 'Main' || route === 'Reports') {
-      return null;
+      return <Main/>;
     } 
   }
 }

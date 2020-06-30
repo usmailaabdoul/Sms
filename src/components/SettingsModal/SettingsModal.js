@@ -1,0 +1,24 @@
+import React from 'react';
+import { Button, Modal} from 'react-bootstrap';
+
+function Settings(props) {
+  return (
+    <Modal
+      {...props}
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+      </Modal.Header>
+
+      <Modal.Body>
+        Settings page
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={props.onHide}>Close</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+export default Settings;

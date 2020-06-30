@@ -1,0 +1,49 @@
+.cards {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.cardWrappermain {
+  background-color: #fcfbfb;
+  display: flex;
+  border-radius: 5px;
+  flex-direction: column;
+  width: 21rem;
+  margin-top: 2rem;
+  height: 20rem;
+
+  .cardWrapperTitle {
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    // justify-content: center;
+
+    .title {
+      font-size: 20px;
+      color: #444444;
+      padding: 20px;
+      padding-bottom: 10px;
+    } 
+
+    p { 
+      font-size: 15px;
+      color: #444444;
+      margin: 0;
+
+      span {
+        font-size: 17px;
+      }
+    }
+  }
+
+  .cardWrapperIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #fcfbfb;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+}

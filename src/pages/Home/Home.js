@@ -5,17 +5,23 @@ import { Navbar, Nav, OverlayTrigger, Popover } from 'react-bootstrap';
 import './home.scss';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Body from '../Body/Body';
+import UserModal from '../../components/UserModal/UserModal';
+import SettingsModal from '../../components/SettingsModal/SettingsModal';
+import LogoutModal from '../../components/LogoutModal/LogoutModal';
 
 class Home extends Component {
 
   constructor() {
     super();
     this.state = {
-      route: 'Main'
+      route: 'Main',
+      showProfile: false,
+      showSettings: false,
+      showLogout: false,
     }
   }
   render() {
-    const { route } = this.state;
+    const { route, showProfile, showSettings, showLogout } = this.state;
 
     return (
       <div>
@@ -59,6 +65,9 @@ class Home extends Component {
         <div className="sidebar shadow">
           <Sidebar
             changeRoute={(route) => this.setState({ route })}
+            showProfileModal={() => this.setState({ showProfile: true })}
+            showSettingsModal={() => this.setState({ showSettings: true })}
+            showLogoutModal={() => this.setState({ showLogout: true })}
           />
         </div>
 
@@ -75,6 +84,21 @@ class Home extends Component {
             <Body route={route} />
           </div>
         </div>
+
+        <UserModal
+          show={showProfile}
+          onHide={() => this.setState({ showProfile: false })}
+        />
+
+        <SettingsModal
+          show={showSettings}
+          onHide={() => this.setState({ showSettings: false })}
+        />
+
+        <LogoutModal
+          show={showLogout}
+          onHide={() => this.setState({ showLogout: false })}
+        />
       </div>
     )
   }
