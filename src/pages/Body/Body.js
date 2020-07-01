@@ -29,7 +29,19 @@ class Body extends Component {
     
     if (route === 'Fee') {
       return <Fee/>;
-    } 
+    }
+    
+    if (route === 'Faculties') {
+      return <Fee/>;
+    }
+
+    if (route === 'Courses') {
+      return <Fee/>;
+    }
+
+    if (route === 'Addmarks') {
+      return <Fee/>;
+    }
 
     if (route === 'Results') {
       return <Results/>;
@@ -38,6 +50,10 @@ class Body extends Component {
     if (route === 'Main' || route === 'Reports') {
       return <Main/>;
     } 
+
+    if (route === '') {
+      return null;
+    }
   }
 }
 

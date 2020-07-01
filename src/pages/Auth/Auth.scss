@@ -1,0 +1,107 @@
+
+.authCard {
+  background-color: #e4e9f0;
+  display: flex;
+  // align-items: center;
+  // justify-content: center;
+  height: 100vh;
+}
+
+.authWrapperfirst {
+  background-color: #fcfbfb;
+  flex: 1;
+  // display: flex;
+  // border-radius: 5px;
+  // flex-direction: column;
+  // width: 25rem;
+  // margin-top: 2rem;
+  // height: 25rem;
+
+  .logo {
+    padding: 30px 40px;
+    color: #00b5cc;
+    font-weight: 600;
+    font-size: 1.7rem;
+  }
+
+  .logoIcon {
+    font-size: 2rem;
+    position: absolute;
+    top: .9rem;
+    left: 10.6rem;
+    transform: rotate(40deg);
+  }
+}
+
+.loginWrapper {
+  margin-top: 5rem;
+  display: flex;
+  flex-direction: column;
+  // align-items: flex-start;
+  justify-content: flex-start;
+  // border: solid;
+  margin-left: 7rem;
+  margin-right: 8rem;
+  
+  .loginText {
+    font-size: 3rem;
+    color: #333549;
+    font-weight: 700;
+  }
+
+  .lable {
+    font-size: 1rem;
+    color: rgb(175, 175, 187);
+    margin: 0;
+    font-weight: 500;
+
+  }
+
+  .form {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+    background-color: #fcfbfb;
+    padding: 0;
+  }
+
+  .buttonWrapper {
+    // border: solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+
+    .button {
+      background-color: #00b5cc;
+      padding: .5rem 5rem;
+      color: #fcfbfb;
+      font-size: 1.5rem;
+      font-weight: 500;
+      border-radius: 12rem;
+
+      p {
+        position: relative;
+        top: 5px;
+      }
+    }
+  }
+
+  .footerWrapper {
+    margin-top: 3rem;
+    color: #333549;
+  }
+}
+
+.authWrappersecond {
+  flex: 1.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .heading {
+    font-size: 2rem;
+  }
+}
