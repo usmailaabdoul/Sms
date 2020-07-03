@@ -19,7 +19,7 @@ class Home extends Component {
       showProfile: false,
       showSettings: false,
       showLogout: false,
-      route: 'home',
+      route: 'Login',
       role: 'student'
     }
   }
@@ -28,7 +28,7 @@ class Home extends Component {
     const { role } = this.state;
 
     if (role === 'admin') {
-      this.setState({navRoute: 'Main'});
+      this.setState({navRoute: 'Students'});
     }
     if (role === 'student') {
       this.setState({navRoute: 'Fee'});
@@ -43,8 +43,11 @@ class Home extends Component {
 
     console.log(navRoute)
 
-    if (route === 'Login') {
-      return <Auth />
+    if (route === 'Logi') {
+      return <Auth 
+        changeMainRoute={(route) => this.setState({route})}
+        setRole={(role) => this.setState({role})}
+      />
     } else {
       return (
         <div>

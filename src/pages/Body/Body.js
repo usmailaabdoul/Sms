@@ -5,6 +5,9 @@ import Staff from '../Staff/Staff';
 import Fee from '../Fee/Fee';
 import Results from '../Results/Results';
 import Main from '../Main/Main';
+import Faculties from '../Faculties/Faculties';
+import Courses from '../Courses/Courses';
+import Addmarks from '../Addmarks/Addmarks';
 
 import './body.scss';
 
@@ -32,15 +35,15 @@ class Body extends Component {
     }
     
     if (route === 'Faculties') {
-      return <Fee/>;
+      return <Faculties/>;
     }
 
     if (route === 'Courses') {
-      return <Fee/>;
+      return <Courses/>;
     }
 
     if (route === 'Addmarks') {
-      return <Fee/>;
+      return <Addmarks/>;
     }
 
     if (route === 'Results') {
