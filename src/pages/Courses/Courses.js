@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FaRegPlusSquare, FaTrashAlt, FaBookOpen, FaPenFancy, FaSearch } from "react-icons/fa";
 import { Form, Button, Table } from 'react-bootstrap';
+import { connect } from 'react-redux';
 
 import './Courses.scss';
 
@@ -30,6 +31,53 @@ class Courses extends Component {
 
 
   deleteCourseCode = (e) => this.setState({ deleteCourseCode: e.target.value });
+
+  addcourse() {
+    const { courseCode } = this.state;
+    const { token } = this.props;
+
+    var obj = { code: courseCode };
+    console.log(obj)
+    let proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let url = 'https://schoolman-ub.herokuapp.com/account/student/courses';
+    let fetchParams = {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(obj)
+    }
+    fetch(proxyurl + url, fetchParams)
+      .then(response => {
+        const statusCode = response.status;
+        const responseJson = response.json();
+        return Promise.all([statusCode, responseJson]);
+      })
+      .then(res => {
+        console.log(res)
+        this.setState({ course: res });
+        const statusCode = res[0];
+        const responseJson = res[1];
+
+        if (statusCode === 200) {
+          const { token, user } = responseJson;
+          console.log(token)
+          console.log(user)
+
+
+        } else if (statusCode === 401) {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        } else {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      }).finally(fin => this.setState({ loading: false }))
+  }
 
   render() {
 
@@ -71,6 +119,7 @@ class Courses extends Component {
             this.state.type === 'add' ?
               <Addcourse
                 courseName={(e) => this.courseName(e)}
+                addcourse={() => this.addcourse()}
                 courseCode={(e) => this.courseCode(e)}
                 departmentName={(e) => this.departmentName(e)}
               />
@@ -104,15 +153,22 @@ class Courses extends Component {
   }
 }
 
-export default Courses;
+const mapStateToProps = ({ token }) => {
+
+  return {
+    token: token.token
+  }
+}
+
+export default connect(mapStateToProps, null)(Courses);
 
 const Addcourse = (props) => {
-  const { courseName, courseCode, departmentName } = props;
+  const { courseName, courseCode, departmentName, addcourse } = props;
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
       <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Enter information</div>
       <div style={{ display: 'flex', }}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1' }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1' }}>
           <div style={{ flex: '1' }} className='lable'>
             Course name
                 </div>
@@ -125,7 +181,7 @@ const Addcourse = (props) => {
               className='form'
             />
           </Form.Group>
-        </div>
+        </div> */}
         <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
           <div style={{ flex: '1' }} className='lable'>
             course code
@@ -141,7 +197,7 @@ const Addcourse = (props) => {
           </Form.Group>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
+        {/* <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
           <div style={{ flex: '1' }} className='lable'>
             credits
                 </div>
@@ -154,12 +210,12 @@ const Addcourse = (props) => {
               className='form'
             />
           </Form.Group>
-        </div>
+        </div> */}
 
 
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem' }}>
-        <Button onClick={() => console.log('hello')} variant="primary" type="button">
+        <Button onClick={() => addcourse()} variant="primary" type="button">
           Add course
             </Button>
       </div>

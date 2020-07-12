@@ -1,50 +1,54 @@
 import React, { Component } from 'react';
 import { FaRegPlusSquare, FaTrashAlt, FaBookOpen, FaPenFancy, FaSearch } from "react-icons/fa";
-import { Form, Button, Table, Spinner } from 'react-bootstrap';
+import { Form, Button, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
-import './Faculties.scss';
+import './Departments.scss';
 
 
-class Faculties extends Component {
+class Departments extends Component {
+
   constructor() {
     super();
     this.state = {
       type: 'add',
-      loading: false,
-      success: false,
-      editsuccess: false,
-      deletesuccess: false,
-
-      facultyName: '',
+      courseName: '',
       departmentName: '',
 
+      editDepartmentName: '',
       editfacultyName: '',
-      editfacultyid: '',
-      facultyId: '',
+      facultyName: '',
+      departmentId: '',
 
-      deleteFacultyid: '',
+      success: false,
+      loading: false,
+      editsuccess: false,
+      deletedSuccess: false,
     }
   }
 
   departmentName = (e) => this.setState({ departmentName: e.target.value });
   facultyName = (e) => this.setState({ facultyName: e.target.value });
 
-  editfacultyName = (e) => this.setState({ editfacultyName: e.target.value });
-  editfacultyid = (e) => this.setState({ editfacultyid: e.target.value });
   editDepartmentName = (e) => this.setState({ editDepartmentName: e.target.value });
+  editfacultyName = (e) => this.setState({ editfacultyName: e.target.value });
 
-  deleteFacultyid = (e) => this.setState({ deleteFacultyid: e.target.value });
 
-  addFaculty = () => {
-    this.setState({ loading: true })
-    const { facultyName } = this.state;
+  departmentId = (e) => this.setState({ departmentId: e.target.value });
+
+  addDepartment = () => {
+    this.setState({ loading: true });
+    const { facultyName, departmentName } = this.state;
     const { token } = this.props;
 
-    var obj = { name: facultyName };
+    var obj = {
+      name: departmentName,
+      faculty: facultyName,
+    };
+
     console.log(obj)
     let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = 'https://schoolman-ub.herokuapp.com/api/admin/faculty';
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/department';
     let fetchParams = {
       method: 'post',
       headers: {
@@ -82,7 +86,7 @@ class Faculties extends Component {
       }).finally(fin => this.setState({ loading: false }))
   }
 
-  editFaculty = () => {
+  editDepartment = () => {
     this.setState({ loading: true })
     const { editfacultyName, editfacultyid } = this.state;
 
@@ -139,16 +143,16 @@ class Faculties extends Component {
       }).finally(fin => this.setState({ loading: false }))
   }
 
+
   render() {
-    console.log(this.state.facultyName);
-    const { success, editsuccess, deletesuccess } = this.state;
+
     return (
       <div>
 
         <div className='cards'>
           <div onClick={() => this.setState({ type: 'add' })} className='cardWrapper shadow-4 grow pointer'>
-            <div style={{ flex: 1.5 }} className='cardWrapperTitle'>
-              <p>Add a new Faculty</p>
+            <div style={{ flex: 1.5, textAlign: 'center' }} className='cardWrapperTitle'>
+              <p>Add a new Departments</p>
             </div>
             <div style={{ flex: 1, backgroundColor: '#3C77F7' }} className='cardWrapperIcon'>
               <FaRegPlusSquare />
@@ -157,7 +161,7 @@ class Faculties extends Component {
 
           <div onClick={() => this.setState({ type: 'edit' })} className='cardWrapper shadow-4 grow pointer'>
             <div style={{ flex: 1.5 }} className='cardWrapperTitle'>
-              <p style={{ textAlign: 'center' }}>Modify Faculty information</p>
+              <p style={{ textAlign: 'center' }}>Modify a Departments information</p>
             </div>
             <div style={{ flex: 1, backgroundColor: '#28A745' }} className='cardWrapperIcon'>
               <FaPenFancy />
@@ -166,22 +170,24 @@ class Faculties extends Component {
 
           <div onClick={() => this.setState({ type: 'delete' })} className='cardWrapper shadow-4 grow pointer'>
             <div style={{ flex: 1.5 }} className='cardWrapperTitle'>
-              <p style={{ textAlign: 'center' }}>Delete a Faculties</p>
+              <p style={{ textAlign: 'center' }}>Delete a Departments</p>
             </div>
             <div style={{ flex: 1, backgroundColor: '#DC3445' }} className='cardWrapperIcon'>
               <FaTrashAlt />
             </div>
           </div>
+
         </div>
 
         <div style={{ marginTop: '2rem' }}>
           {
             this.state.type === 'add' ?
-              <Addfaculty
+              <AddDepartment
                 facultyName={(e) => this.facultyName(e)}
-                addFaculty={() => this.addFaculty()}
+                addDepartment={() => this.addDepartment()}
+                departmentName={(e) => this.departmentName(e)}
                 loading={this.state.loading}
-                success={success}
+                success={this.state.success}
               />
               :
               null
@@ -189,12 +195,12 @@ class Faculties extends Component {
 
           {
             this.state.type === 'edit' ?
-              <Editfaculty
+              <EditDepartment
+                editDepartmentName={(e) => this.editDepartmentName(e)}
                 editfacultyName={(e) => this.editfacultyName(e)}
-                editFaculty={() => this.editFaculty()}
-                editfacultyid={(e) => this.editfacultyid(e)}
+                editDepartment={() => this.editDepartment()}
                 loading={this.state.loading}
-                editsuccess={editsuccess}
+                editsuccess={this.state.editsuccess}
               />
               :
               null
@@ -202,11 +208,10 @@ class Faculties extends Component {
 
           {
             this.state.type === 'delete' ?
-              <DeleteFaculty
-                deleteFacultyid={(e) => this.deleteFacultyid(e)}
+              <DeleteDepartment
+                departmentId={(e) => this.departmentId(e)}
                 loading={this.state.loading}
-                deletesuccess={deletesuccess}
-                deleteFaculty={() => this.deleteFaculty()}
+                deletedSuccess={this.state.deletedSuccess}
               />
               :
               null
@@ -226,21 +231,35 @@ const mapStateToProps = ({ token }) => {
   }
 }
 
-export default connect(mapStateToProps, null)(Faculties);
+export default connect(mapStateToProps, null)(Departments);
 
-const Addfaculty = (props) => {
-  const { facultyName, addFaculty, loading, success } = props;
-
+const AddDepartment = (props) => {
+  const { facultyName, departmentName, addDepartment, success, loading } = props;
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
       <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Enter information</div>
       <div style={{ display: 'flex', }}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '40%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
           <div style={{ flex: '1' }} className='lable'>
-            Faculty
+            Department name
                 </div>
           <Form.Group controlId="exampleForm.ControlSelect1"
-            style={{ flex: '3', margin: 0 }}>
+            style={{ flex: '2', margin: 0 }}>
+            <Form.Control
+              onChange={departmentName}
+              type="text"
+              placeholder="Department name"
+              className='form'
+            />
+          </Form.Group>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
+          <div style={{ flex: '1' }} className='lable'>
+            Faculty name
+                </div>
+          <Form.Group controlId="exampleForm.ControlSelect1"
+            style={{ flex: '2', margin: 0 }}>
             <Form.Control
               onChange={facultyName}
               type="text"
@@ -250,80 +269,22 @@ const Addfaculty = (props) => {
           </Form.Group>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem' }}>
           {
             loading ?
               <Spinner animation="border" variant="info" />
               :
-              <Button onClick={() => addFaculty()} variant="primary" type="button">
-                create faculty
+              <Button onClick={() => addDepartment()} variant="primary" type="button">
+                Add course
             </Button>
           }
         </div>
 
-        {
-          success ?
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'green', fontSize: '1.2rem' }}>
-              Faculty Created successfully
-          </div>
-            : null
-        }
-      </div>
-    </div>
-  )
-}
-
-const Editfaculty = (props) => {
-  const { editfacultyName, editFaculty, editfacultyid, loading, editsuccess } = props;
-
-  return (
-    <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
-      <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Edit information</div>
-      <div style={{ display: 'flex', }}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '40%' }}>
-          <div style={{ flex: '1' }} className='lable'>
-            Faculty
-                </div>
-          <Form.Group controlId="exampleForm.ControlSelect1"
-            style={{ flex: '3', margin: 0 }}>
-            <Form.Control
-              onChange={editfacultyName}
-              type="text"
-              placeholder="Edit Faculty name"
-              className='form'
-            />
-          </Form.Group>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '20%' }}>
-          <div style={{ flex: '1' }} className='lable'>
-            Id
-                </div>
-          <Form.Group controlId="exampleForm.ControlSelect1"
-            style={{ flex: '2', margin: 0 }}>
-            <Form.Control
-              onChange={editfacultyid}
-              type="text"
-              placeholder="id"
-              className='form'
-            />
-          </Form.Group>
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', }}>
-          {
-            loading ?
-              <Spinner animation="border" variant="info" />
-              :
-              <Button onClick={() => editFaculty()} variant="primary" type="button">
-                Edit faculty
-            </Button>
-          }
-        </div>
       </div>
       {
-        editsuccess ?
+        success ?
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'green', fontSize: '1.2rem' }}>
-            Faculty successfully edited
+            Department successfully added
           </div>
           : null
       }
@@ -331,43 +292,102 @@ const Editfaculty = (props) => {
   )
 }
 
-const DeleteFaculty = (props) => {
-  const { deleteFacultyid, deletesuccess, loading, deleteFaculty } = props;
+const EditDepartment = (props) => {
+  const { editDepartmentName, editfacultyName, editDepartment, editsuccess, loading } = props;
 
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
-      <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Caution u are about to delete a faculty</div>
+      <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Edit Department information</div>
       <div style={{ display: 'flex', }}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '50%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1' }}>
           <div style={{ flex: '1' }} className='lable'>
-              faculty Id
+            Department name
                 </div>
           <Form.Group controlId="exampleForm.ControlSelect1"
             style={{ flex: '2', margin: 0 }}>
             <Form.Control
-              onChange={deleteFacultyid}
+              onChange={editDepartmentName}
               type="text"
-              placeholder="id"
+              placeholder="Department name"
+              className='form'
+            />
+          </Form.Group>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
+          <div style={{ flex: '1' }} className='lable'>
+            Faculty
+                </div>
+          <Form.Group controlId="exampleForm.ControlSelect1"
+            style={{ flex: '2', margin: 0 }}>
+            <Form.Control
+              onChange={editfacultyName}
+              type="text"
+              placeholder="Faculty"
               className='form'
             />
           </Form.Group>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem' }}>
           {
             loading ?
               <Spinner animation="border" variant="info" />
               :
-              <Button onClick={() => deleteFaculty()} variant="danger" type="button">
-                Delete faculty
+              <Button onClick={() => editDepartment()} variant="primary" type="button">
+                Edit course
             </Button>
           }
         </div>
       </div>
       {
-        deletesuccess ?
+        editsuccess ?
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'green', fontSize: '1.2rem' }}>
+            Edited Department details successfully
+          </div>
+          : null
+      }
+    </div>
+  )
+}
+
+const DeleteDepartment = (props) => {
+  const { departmentId, loading, deletedSuccess } = props;
+
+  return (
+    <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
+      <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Caution u are about to delete a Course</div>
+      <div style={{ display: 'flex', }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '50%' }}>
+          <div style={{ flex: '1' }} className='lable'>
+            Department id
+                </div>
+          <Form.Group controlId="exampleForm.ControlSelect1"
+            style={{ flex: '2', margin: 0 }}>
+            <Form.Control
+              onChange={departmentId}
+              type="text"
+              placeholder="department id"
+              className='form'
+            />
+          </Form.Group>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem' }}>
+          {
+            loading ?
+              <Spinner animation="border" variant="info" />
+              :
+              <Button onClick={() => console.log('hello')} variant="danger" type="button">
+                Delete course
+            </Button>
+          }
+
+        </div>
+      </div>
+      {
+        deletedSuccess ?
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'red', fontSize: '1.2rem' }}>
-            Faculty successfully Deleted
+            Deleted Department details successfully
           </div>
           : null
       }

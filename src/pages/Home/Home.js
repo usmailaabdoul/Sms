@@ -20,33 +20,38 @@ class Home extends Component {
       showSettings: false,
       showLogout: false,
       route: 'Login',
-      role: 'student'
+      role: ''
     }
   }
 
   componentDidMount() {
     const { role } = this.state;
 
+    this.manageNavRoutes(role)
+  }
+
+  manageNavRoutes(role) {
+    this.setState({role})
+
     if (role === 'admin') {
       this.setState({navRoute: 'Students'});
     }
     if (role === 'student') {
-      this.setState({navRoute: 'Fee'});
+      this.setState({navRoute: 'Results'});
     }
     if (role === 'staff') {
       this.setState({navRoute: 'Addmarks'});
     }
   }
-
   render() {
     const { navRoute, route, showProfile, showSettings, showLogout, role } = this.state;
 
     console.log(navRoute)
 
-    if (route === 'Logi') {
+    if (route === 'Login') {
       return <Auth 
         changeMainRoute={(route) => this.setState({route})}
-        setRole={(role) => this.setState({role})}
+        setRole={(role) => this.manageNavRoutes(role)}
       />
     } else {
       return (

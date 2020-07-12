@@ -6,8 +6,12 @@ import Fee from '../Fee/Fee';
 import Results from '../Results/Results';
 import Main from '../Main/Main';
 import Faculties from '../Faculties/Faculties';
-import Courses from '../Courses/Courses';
+// import Courses from '../Courses/Courses';
 import Addmarks from '../Addmarks/Addmarks';
+import Departments from '../Departments/Departments';
+
+import StaffDetails from '../../components/StaffDetails/StaffDetails'
+import StudentsDetails from '../../components/StudentsDetails/StudentsDetails'
 
 import './body.scss';
 
@@ -38,8 +42,8 @@ class Body extends Component {
       return <Faculties/>;
     }
 
-    if (route === 'Courses') {
-      return <Courses/>;
+    if (route === 'Departments') {
+      return <Departments/>;
     }
 
     if (route === 'Addmarks') {
@@ -50,10 +54,15 @@ class Body extends Component {
       return <Results/>;
     } 
 
-    if (route === 'Main' || route === 'Reports') {
+    if (route === 'Main') {
       return <Main/>;
     } 
-
+    if (route === 'StaffDetails') {
+      return <StaffDetails/>;
+    } 
+    if (route === 'StudentsDetails' ) {
+      return <StudentsDetails/>;
+    }
     if (route === '') {
       return null;
     }

@@ -17,18 +17,19 @@
   // margin-top: 2rem;
   // height: 25rem;
 
-  .logo {
+  .authlogo {
     padding: 30px 40px;
     color: #00b5cc;
     font-weight: 600;
     font-size: 1.7rem;
   }
 
-  .logoIcon {
-    font-size: 2rem;
+  .authlogoIcon {
+    // font-size: 2rem;
+    height: 2.5rem;
     position: absolute;
-    top: .9rem;
-    left: 10.6rem;
+    top: 1.2rem;
+    left: 10.3rem;
     transform: rotate(40deg);
   }
 }

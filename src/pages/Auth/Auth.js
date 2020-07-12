@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { FaGraduationCap } from "react-icons/fa";
 import { Form, Spinner } from 'react-bootstrap';
 import img from '../../res/img/image3.svg'
+import { setToken } from '../../redux/actions/setTokenActions';
+import { setUser } from '../../redux/actions/setUserActions';
+import { connect } from 'react-redux';
+import icon from '../../res/img/gradImg.png';
 
 import './Auth.scss';
 
@@ -32,6 +36,10 @@ class Auth extends Component {
     this.setState({ loading: true })
     const { matricule, password, role } = this.state;
 
+    // this.props.setRole(role)
+    // this.props.changeMainRoute('home')
+    // this.props.setToken();
+
     if (matricule.length === 0) {
       return this.setState({ loading: false })
     }
@@ -39,10 +47,53 @@ class Auth extends Component {
       return this.setState({ loading: false })
     }
 
-    console.log('logged in', matricule, password, role);
-    this.setState({ loading: false });
-    this.props.setRole(role)
-    this.props.changeMainRoute('home')
+    // console.log('logged in', matricule, password, role);
+
+    var obj = { username: matricule, password, role };
+    console.log('obj', JSON.stringify(obj))
+
+    // let proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let url = 'https://schoolman-ub.herokuapp.com/api/auth/login';
+    let fetchParams = {
+      method: 'POST',
+      // headers: { Authorization: `Bearer ${token}` }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(obj)
+    }
+    fetch(url, fetchParams)
+      .then(response => 
+        {
+        const statusCode = response.status;
+        const responseJson = response.json();
+        return Promise.all([statusCode, responseJson]);
+      }
+      )
+      .then(res => {
+        // console.log(res)
+        const statusCode = res[0];
+        const responseJson = res[1];
+
+        if (statusCode === 200) {
+          const {token, user} = responseJson;
+          console.log(token)
+          console.log(user)
+          this.props.setToken(token);
+          this.props.setUser(user);
+          this.setState({ loading: false });
+          this.props.setRole(role)
+          this.props.changeMainRoute('Home')  
+
+        } else if (statusCode === 401) {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        } else {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      }).finally(fin => this.setState({ loading: false }))
   }
 
   render() {
@@ -51,8 +102,10 @@ class Auth extends Component {
     return (
       <div className='authCard'>
         <div className='authWrapperfirst'>
-          <div className='logo'>
-            <span className='logoIcon'><FaGraduationCap /></span> SchoolMan
+          <div className='authlogo'>
+            <span>
+              <img src={icon} alt='onboarding image1' className='authlogoIcon'/>
+              </span> SchoolMan
           </div>
 
           <div className='loginWrapper'>
@@ -67,24 +120,7 @@ class Auth extends Component {
                   placeholder="matricule"
                   className='form'
                 />
-                {/* <Form.Text className="text-muted">
-                  We'll never share your email with anyone else.
-                </Form.Text> */}
               </Form.Group>
-
-              <div style={{display: 'flex', alignItems: 'center', margin: '1.5rem 0rem'}}>
-                <div style={{flex: '1'}} className='lable'>
-                  Select you role
-                </div>
-                <Form.Group controlId="exampleForm.ControlSelect1" 
-                  style={{flex: '2', margin: 0}}>
-                  <Form.Control onChange={this.roleChange} as="select" >
-                    <option>admin</option>
-                    <option>staff</option>
-                    <option>student</option>
-                  </Form.Control>
-                </Form.Group>
-              </div>
 
               <Form.Group controlId="formBasicPassword">
                 <Form.Label className='lable'>Password</Form.Label>
@@ -95,6 +131,20 @@ class Auth extends Component {
                   className='form'
                 />
               </Form.Group>
+
+              <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0rem' }}>
+                <div style={{ flex: '1' }} className='lable'>
+                  Select you role
+                </div>
+                <Form.Group controlId="exampleForm.ControlSelect1"
+                  style={{ flex: '2', margin: 0 }}>
+                  <Form.Control onChange={this.roleChange} as="select" >
+                    <option>admin</option>
+                    <option>staff</option>
+                    <option>student</option>
+                  </Form.Control>
+                </Form.Group>
+              </div>
             </Form>
 
             <div className='buttonWrapper'>
@@ -131,4 +181,9 @@ class Auth extends Component {
   }
 }
 
-export default Auth;
+const mapStateToProps = ({ token }) => {
+
+  return {}
+}
+
+export default connect(mapStateToProps, { setToken, setUser })(Auth);

@@ -1,0 +1,23 @@
+.StudentsResults {
+  background-color: #fcfbfb;
+  margin-right: 1rem;
+  padding: 1.5rem 0rem
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #00b5cc;
+  font-weight: 600;
+  font-size: 1.7rem;
+}
+
+.logoIcon {
+  height: 2.5rem;
+  margin: 0;
+  position: relative;
+  top: -0.8rem;
+  left: 10.2rem;
+  transform: rotate(40deg);
+}
