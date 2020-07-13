@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { FaRegPlusSquare, FaTrashAlt, FaBookOpen, FaPenFancy, FaSearch } from "react-icons/fa";
-import { Form, Button, Table } from 'react-bootstrap';
-import StudentsResults from '../../components/StudentsDetails/StudentsDetails';
+import { Form, Button, Spinner } from 'react-bootstrap';
+import StudentsResults from '../../components/StudentsResults/StudentsResults';
+import { connect } from 'react-redux';
 
 import './Results.scss';
 
@@ -10,9 +11,10 @@ class Results extends Component {
   constructor() {
     super();
     this.state = {
-      type: 'results',
+      type: '',
       semester: '',
-      results: '',
+      results: [],
+      loading: false,
     }
   }
 
@@ -20,16 +22,35 @@ class Results extends Component {
   getYear = (e) => this.setState.setState({ results: e.target.value })
 
   getResults() {
-    this.setState({ type: 'results' })
+    const { token } = this.props;
+    this.setState({ loading: true })
+    let proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let url = 'https://schoolman-ub.herokuapp.com/api/account/student/results';
+    let fetchParams = {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+      // headers: {'Content-Type': 'application/json'},
+      // body: JSON.stringify(obj)
+    }
+    fetch(proxyurl + url, fetchParams)
+      .then(response => response.json())
+      .then(res => {
+        console.log(res)
+        this.setState({ results: res.Results, type: 'results', loading: false });
+      })
+      .catch(err => {
+        console.log(err)
+      }).finally(fin => this.setState({ loading: false }))
   }
 
   render() {
+    const { results, loading, semester } = this.state;
 
     return (
       <div>
 
         <div style={{ marginTop: '2rem' }}>
-          <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
+          <div style={{ backgroundColor: '#fcfbfb', margin: '1rem 2rem', padding: '0rem' }} className='shadow-5 br1'>
             {/* <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Enter students information</div> */}
 
             <div style={{ display: 'flex', }}>
@@ -59,7 +80,7 @@ class Results extends Component {
                 </Form.Group>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1'}}>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1' }}>
                 <div style={{ flex: '1' }} className='lable'>
                   Semester
                 </div>
@@ -74,9 +95,15 @@ class Results extends Component {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '0rem 1rem', flex: '.5' }}>
-                <Button onClick={() => this.getResults()} variant="primary" type="button" className='grow'>
+              {
+                loading ?
+                    <Spinner animation="border" variant="info" />
+                :
+                    <Button onClick={() => this.getResults()} variant="primary" type="button" className='grow'>
                   Get results
                 </Button>
+              
+                }
               </div>
             </div>
 
@@ -85,7 +112,7 @@ class Results extends Component {
             <div style={{ marginTop: '2rem' }}>
               {
                 this.state.type === 'results' ?
-                  <StudentsResults />
+                  <StudentsResults results={results} semester={semester} />
                   :
                   null
 
@@ -99,4 +126,11 @@ class Results extends Component {
   }
 }
 
-export default Results;
+const mapStateToProps = ({ token }) => {
+
+  return {
+    token: token.token
+  }
+}
+
+export default connect(mapStateToProps, null)(Results);

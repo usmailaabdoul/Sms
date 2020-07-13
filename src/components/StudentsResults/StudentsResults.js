@@ -5,8 +5,7 @@ import { FaGraduationCap } from "react-icons/fa";
 import html2pdf from 'html2pdf.js';
 import img from '../../res/img/gradImg.png';
 
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import Moment from 'react-moment';
 
 import './StudentsResults.scss';
 
@@ -30,19 +29,18 @@ class StudentsResults extends Component {
   }
 
   renderTable() {
-    const { marks } = this.state;
+    const { results } = this.props;
+    let id = 0;
 
-    return marks.map((mark, rowIndex) => {
-
+    return results.map((result, rowIndex) => {
+      id++;
       return (
         <tr key={rowIndex} style={{ color: '#00000090' }}>
-          <td>{mark.Id}</td>
-          <td>{mark.courseCode}</td>
-          <td>{mark.CourseTitle}</td>
-          <td>{mark.CA}</td>
-          <td>{mark.Exams}</td>
-          <td>{mark.finalMark}</td>
-          <td>{mark.grade}</td>
+          <td>{id}</td>
+          <td>{result.code}</td>
+          <td>{result.ca_mark}</td>
+          <td>{result.exam_mark}</td>
+          <td>{result.grade}</td>
         </tr>
       )
     })
@@ -65,6 +63,7 @@ class StudentsResults extends Component {
   }
 
   render() {
+    const { semester } = this.props;
 
     return (
       <div >
@@ -90,18 +89,18 @@ class StudentsResults extends Component {
               <p style={{ margin: '0' }}>Major: Major</p>
 
             </div>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center',}}>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
               <div className='logo'>
-                <span>
-                <img src={img} alt='onboarding image1' className='logoIcon'/>
-                  </span> SchoolMan
+                SchoolMan
           </div>
             </div>
             <div style={{ flex: 2, justifyContent: 'flex-end', textAlign: 'right', margin: '0', }}>
               <p style={{ margin: '0' }}>Department: computer Department</p>
-              <p style={{ margin: '0' }}>semester: first semester</p>
+              <p style={{ margin: '0' }}>semester: {semester}</p>
               <p style={{ margin: '0' }}>year: 2019/2020</p>
-              <p style={{ margin: '0' }}>date: today</p>
+              <p style={{ margin: '0' }}>date: 
+                <Moment format="YYYY/MM/DD" />
+              </p>
             </div>
           </div>
           <div>
@@ -110,14 +109,12 @@ class StudentsResults extends Component {
                 <tr>
                   <th>S/n</th>
                   <th>Course code</th>
-                  <th>Course title</th>
                   <th>CA/30</th>
                   <th>Exams/70</th>
-                  <th>Final mark</th>
                   <th>Grade</th>
                 </tr>
               </thead>
-              <tbody style={{border: 'solid',borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', }}>
+              <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', }}>
                 {this.renderTable()}
               </tbody>
             </Table>

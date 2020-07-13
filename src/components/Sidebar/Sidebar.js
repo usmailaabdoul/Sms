@@ -222,6 +222,16 @@ class Sidebar extends Component {
         <div>
           <div
             className='pointer'
+            onClick={() => this.handleRoute('RegisterCourse')}
+            style={{ color: route === 'RegisterCourse' ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
+            <div>
+              <span style={{ position: 'relative', bottom: 2 }}><GiBookshelf /></span> Register Course
+              </div>
+            <div><FaAngleRight /></div>
+          </div>
+
+          <div
+            className='pointer'
             onClick={() => this.handleRoute('Fee')}
             style={{ color: route === 'Fee' ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
             <div>
@@ -239,6 +249,7 @@ class Sidebar extends Component {
               </div>
             <div><FaAngleRight /></div>
           </div>
+
         </div>
       )
     }

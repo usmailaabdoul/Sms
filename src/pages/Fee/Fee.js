@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { GiTakeMyMoney } from "react-icons/gi";
 import { Form, Button, Table } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import html2pdf from 'html2pdf.js';
 
 import './Fee.scss';
 
@@ -9,11 +11,67 @@ class Fee extends Component {
   constructor() {
     super();
     this.state = {
-      amount: '',
+      transanctions: [],
     }
   }
 
-  makePayment = (e) => this.setState({amount: e.target.value})
+  makePayment = (e) => this.setState({ amount: e.target.value })
+
+  getFees() {
+    const { token } = this.props;
+    this.setState({ loading: true })
+    let proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let url = 'https://schoolman-ub.herokuapp.com/api/account/student/fees';
+    let fetchParams = {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
+      // headers: {'Content-Type': 'application/json'},
+      // body: JSON.stringify(obj)
+    }
+    fetch(proxyurl + url, fetchParams)
+      .then(response => response.json())
+      .then(res => {
+        console.log(res)
+        this.setState({ transanctions: res, loading: false });
+      })
+      .catch(err => {
+        console.log(err)
+      }).finally(fin => this.setState({ loading: false }))
+  }
+
+  renderTable() {
+    const { transanctions } = this.state;
+
+    if (transanctions) {
+      return transanctions.map((transanction, rowIndex) => {
+        return (
+          <tr key={rowIndex} style={{ color: '#00000090' }}>
+            <td>{transanction.student_id}</td>
+            <td>{transanction.id}</td>
+            <td>{transanction.fine}</td>
+            <td>{transanction.created_at}</td>
+            <td>{transanction.updated_at}</td>
+          </tr>
+        )
+      })
+    }
+  }
+
+
+  printDocument() {
+    var element = document.getElementById('divToPrint');
+    var opt = {
+      filename: 'Fees.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: {
+        scale: 2, scrollY: 0, scrollX: 0,
+      },
+      jsPDF: { unit: 'cm', format: 'a4', orientation: 'p', }
+    };
+
+    html2pdf().from(element).set(opt).save();
+
+  }
 
   render() {
 
@@ -21,9 +79,9 @@ class Fee extends Component {
       <div>
 
         <div style={{ margin: '0rem 3rem' }}>
-          <div onClick={() => this.setState({ type: 'payment' })} className='cardWrapper shadow-4 grow pointer'>
+          <div onClick={() => this.getFees()} className='cardWrapper shadow-4 grow pointer'>
             <div style={{ flex: 1.5 }} className='cardWrapperTitle'>
-              <p>Pay fees</p>
+              <p>Transaction details</p>
             </div>
             <div style={{ flex: 1, backgroundColor: '#3C77F7' }} className='cardWrapperIcon'>
               <GiTakeMyMoney />
@@ -31,31 +89,28 @@ class Fee extends Component {
           </div>
         </div>
 
+
         <div style={{ marginTop: '2rem' }}>
-          <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
-            {/* <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Enter students information</div> */}
+          <div style={{ backgroundColor: '#fcfbfb', margin: '1rem 1rem', padding: '1rem' }} className='br2'>
 
-            <div style={{ display: 'flex', }}>
-              <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '47%' }}>
-                <div style={{ flex: '1' }} className='lable'>
-                  Faculty
-                </div>
-                <Form.Group controlId="exampleForm.ControlSelect1"
-                  style={{ flex: '2', margin: 0 }}>
-                  <Form.Control onChange={this.makePayment} as="select"
-                    className='form' >
-                    <option>25 000frs</option>
-                    <option>50 000frs</option>
-                  </Form.Control>
-                </Form.Group>
-              </div>
+            <div>
+              <div style={{ textAlign: 'center', padding: '1rem 0rem' }}>Fees Transaction details</div>
+              <Table striped responsive>
+                <thead style={{ backgroundColor: '#cccccc', color: 'white' }}>
+                  <tr>
+                    <th>Student Id</th>
+                    <th>Transaction id</th>
+                    <th>Amount</th>
+                    <th>Created date</th>
+                    <th>Updated date</th>
+                  </tr>
+                </thead>
+                <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', }}>
+                  {this.renderTable()}
+                </tbody>
+              </Table>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '0rem 1rem' }}>
-              <Button onClick={() => console.log('hello')} variant="primary" type="button">
-                make payment
-            </Button>
-            </div>
           </div>
         </div>
       </div>
@@ -63,4 +118,11 @@ class Fee extends Component {
   }
 }
 
-export default Fee;
+const mapStateToProps = ({ token }) => {
+
+  return {
+    token: token.token
+  }
+}
+
+export default connect(mapStateToProps, null)(Fee);

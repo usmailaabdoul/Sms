@@ -20,7 +20,7 @@ class Home extends Component {
       showSettings: false,
       showLogout: false,
       route: 'Login',
-      role: ''
+      role: 'student'
     }
   }
 
@@ -37,7 +37,7 @@ class Home extends Component {
       this.setState({navRoute: 'Students'});
     }
     if (role === 'student') {
-      this.setState({navRoute: 'Results'});
+      this.setState({navRoute: 'RegisterCourse'});
     }
     if (role === 'staff') {
       this.setState({navRoute: 'Addmarks'});
