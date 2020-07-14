@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { GiTakeMyMoney } from "react-icons/gi";
-import { Form, Button, Table } from 'react-bootstrap';
+import { Form, Button, Table, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import html2pdf from 'html2pdf.js';
 
@@ -12,12 +12,14 @@ class Fee extends Component {
     super();
     this.state = {
       transanctions: [],
+      loading: false,
     }
   }
 
   makePayment = (e) => this.setState({ amount: e.target.value })
 
   getFees() {
+    this.setState({loading: true})
     const { token } = this.props;
     this.setState({ loading: true })
     let proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -45,7 +47,7 @@ class Fee extends Component {
     if (transanctions) {
       return transanctions.map((transanction, rowIndex) => {
         return (
-          <tr key={rowIndex} style={{ color: '#00000090' }}>
+          <tr key={rowIndex} style={{ color: '#00000090', fontSize: '0.8rem' }}>
             <td>{transanction.student_id}</td>
             <td>{transanction.id}</td>
             <td>{transanction.fine}</td>
@@ -74,6 +76,7 @@ class Fee extends Component {
   }
 
   render() {
+    const {loading} = this.state;
 
     return (
       <div>
@@ -84,19 +87,24 @@ class Fee extends Component {
               <p>Transaction details</p>
             </div>
             <div style={{ flex: 1, backgroundColor: '#3C77F7' }} className='cardWrapperIcon'>
-              <GiTakeMyMoney />
+              {
+                loading ?
+                  <Spinner animation="border" variant="light" />
+                  :
+                  <GiTakeMyMoney />
+              }
             </div>
           </div>
         </div>
 
 
-        <div style={{ marginTop: '2rem' }}>
+        <div style={{ marginTop: '2rem' }} id="divToPrint">
           <div style={{ backgroundColor: '#fcfbfb', margin: '1rem 1rem', padding: '1rem' }} className='br2'>
 
             <div>
               <div style={{ textAlign: 'center', padding: '1rem 0rem' }}>Fees Transaction details</div>
               <Table striped responsive>
-                <thead style={{ backgroundColor: '#cccccc', color: 'white' }}>
+                <thead style={{ backgroundColor: '#cccccc', color: 'white', fontSize: '0.8rem' }}>
                   <tr>
                     <th>Student Id</th>
                     <th>Transaction id</th>
@@ -112,6 +120,12 @@ class Fee extends Component {
             </div>
 
           </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', marginTop: '1rem' }}>
+          <Button onClick={() => this.printDocument()} variant="primary" type="button">
+            Download details
+                </Button>
         </div>
       </div>
     )

@@ -20,7 +20,7 @@ class Home extends Component {
       showSettings: false,
       showLogout: false,
       route: 'Login',
-      role: 'student'
+      role: 'staff'
     }
   }
 
@@ -120,6 +120,7 @@ class Home extends Component {
 
           <UserModal
             show={showProfile}
+            role={role}
             onHide={() => this.setState({ showProfile: false })}
           />
 

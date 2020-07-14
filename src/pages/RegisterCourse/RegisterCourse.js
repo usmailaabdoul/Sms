@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { FaRegPlusSquare, FaTrashAlt, FaBookOpen, FaPenFancy, FaSearch } from "react-icons/fa";
 import { Form, Button, Table, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import html2pdf from 'html2pdf.js';
@@ -11,11 +10,7 @@ class RegisterCourse extends Component {
   constructor() {
     super();
     this.state = {
-      courses: [
-        { code: 'CEF440' },
-        { code: 'CEF450' },
-        { code: 'CEF460' },
-      ],
+      courses: [],
       selectedCourses: [],
       obj: [],
       finished: false,
@@ -105,7 +100,7 @@ class RegisterCourse extends Component {
 
     let bodyObj = {codes: obj}
     console.log(bodyObj);
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
+    // let proxyurl = "https://cors-anywhere.herokuapp.com/";
     let url = 'https://schoolman-ub.herokuapp.com/api/account/student/courses';
     let fetchParams = {
       method: 'POST',
@@ -115,7 +110,7 @@ class RegisterCourse extends Component {
       },
       body: JSON.stringify(bodyObj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => {
         const statusCode = response.status;
         const responseJson = response.json();
@@ -198,7 +193,7 @@ class RegisterCourse extends Component {
                       <td>{s.credits}</td>
                       <td>
                         <div onClick={() => this.removeCourse(s.code)} style={{ color: 'red' }} className='pointer grow'>
-                          remove course
+                        delete course
                         </div>
                       </td>
                     </tr>

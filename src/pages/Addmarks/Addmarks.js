@@ -9,7 +9,7 @@ class Addmarks extends Component {
   constructor() {
     super();
     this.state = {
-      type: ''
+      type: 'add'
     }
   }
   render() {

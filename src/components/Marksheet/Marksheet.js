@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { } from "react-icons/fa";
-import { Form, Button, Table } from 'react-bootstrap';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { Form, Button, Table, Spinner } from 'react-bootstrap';
+import { connect } from 'react-redux';
 
 import './Marksheet.scss';
 
@@ -14,141 +12,339 @@ class Marksheet extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.state = {
-      marks: [
-        { Id: 1, Matricule: 'FE17A090', CA: '', Exams: '' },
-        { Id: 2, Matricule: 'FE17A091', CA: '', Exams: '' },
-        { Id: 3, Matricule: 'FE17A092', CA: '', Exams: '' },
-        { Id: 4, Matricule: 'FE17A093', CA: '', Exams: '' },
+      courses: [
+        {
+          Id: 1, code: 'CEF401', students: [
+            { matricule: 'FE17A090', },
+            { matricule: 'FE17A091', },
+            { matricule: 'FE17A092', },
+            { matricule: 'FE17A093', },
+          ],
+        },
+        {
+          Id: 2, code: 'CEF402', students: [
+            { matricule: 'FE17A094', },
+            { matricule: 'FE17A095', },
+            { matricule: 'FE17A096', },
+            { matricule: 'FE17A097', },
+          ]
+        },
+        {
+          Id: 3, code: 'CEF403', students: [
+            { matricule: 'FE17A098', },
+            { matricule: 'FE17A099', },
+            { matricule: 'FE17A081', },
+            { matricule: 'FE17A083', },
+          ]
+        },
+        {
+          Id: 4, code: 'CEF404', students: [
+            { matricule: 'FE17A070', },
+            { matricule: 'FE17A071', },
+            { matricule: 'FE17A072', },
+            { matricule: 'FE17A073', },
+          ]
+        },
       ],
-      loading: 'false',
+      selectedCourse: '',
+      students: [],
+
+      studentMarkSheet: [],
+      loading: false,
     }
   }
 
-  renderTable() {
-    const { marks } = this.state;
+  componentDidMount() {
+    // this.getCourses()
+  }
 
-    return marks.map((mark, rowIndex) => {
+  selectedCourse = (e) => {
+    const { courses } = this.state;
 
+    this.setState({ selectedCourse: e.target.value })
+    let selectedCourse = e.target.value
+
+    let course = courses.filter((c) => c.code === selectedCourse)
+
+    if (course.length > 0) {
+
+      const { students } = course[0];
+      this.setState({ students })
+    }
+  };
+
+  getCourses() {
+    const { token } = this.props;
+
+    let proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let url = 'https://schoolman-ub.herokuapp.com/api/account/staff/courses';
+    let fetchParams = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      // body: JSON.stringify(bodyObj)
+    }
+    fetch(proxyurl + url, fetchParams)
+      .then(response => {
+        const statusCode = response.status;
+        const responseJson = response.json();
+        return Promise.all([statusCode, responseJson]);
+      })
+      .then(res => {
+        console.log(res)
+        this.setState({ course: res });
+        const statusCode = res[0];
+        const responseJson = res[1];
+
+        if (statusCode === 200) {
+          console.log(responseJson)
+        } else if (statusCode === 401) {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        } else {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      }).finally(fin => this.setState({ loading: false }))
+  }
+
+  selectedStudents = (e) => {
+    let selectedStudentmatricule = e.target.value;
+
+    const { studentMarkSheet, students, selectedCourse } = this.state;
+
+    let newStudent = students.find((s) => s.matricule === selectedStudentmatricule);
+    let { matricule } = newStudent;
+
+    let newStudentSheet = {
+      matricule: matricule,
+      ca_mark: '',
+      exam_mark: '',
+      grade: '',
+      code: selectedCourse
+    };
+
+    let newStudentMarkSheet = [...studentMarkSheet, newStudentSheet]
+    this.setState({ studentMarkSheet: newStudentMarkSheet, })
+
+  }
+
+  removeCourse = (matricule) => {
+    const { studentMarkSheet } = this.state;
+
+    let index = studentMarkSheet.findIndex((s) => s.matricule === matricule);
+    if (index > -1) {
+      studentMarkSheet.splice(index, 1);
+    }
+
+    this.setState({ studentMarkSheet })
+  }
+
+  renderTable(studentMarkSheet) {
+    let id = 0
+    return studentMarkSheet.map((mark, rowIndex) => {
+      id++;
       return (
-        <tr key={rowIndex}>
-          <td>{mark.Id}</td>
-          <td>{mark.Matricule}</td>
+        <tr key={rowIndex} style={{ fontSize: '0.8rem' }}>
+          <td>{id}</td>
+          <td>{mark.matricule}</td>
           <td>
             <Input
               cellIndex={2}
-              Id={mark.Id}
-              defaultValue={mark.CA}
+              matricule={mark.matricule}
+              defaultValue={mark.ca_mark}
               onChange={this.onChange}
             />
           </td>
           <td>
             <Input
               cellIndex={3}
-              Id={mark.Id}
-              defaultValue={mark.Exams}
+              matricule={mark.matricule}
+              defaultValue={mark.exam_mark}
               onChange={this.onChange}
             />
+          </td>
+          <td>
+            {this.computeGrade(mark.ca_mark, mark.exam_mark, mark.matricule)}
+          </td>
+          <td>
+            <div onClick={() => this.removeCourse(mark.matricule)} style={{ color: 'red' }} className='pointer grow'>
+              delete student
+            </div>
           </td>
         </tr>
       )
     })
   }
 
-  onChange(event, cellIndex, Id) {
+  computeGrade(ca, exam, matricule) {
+    let sum = Number(ca) + Number(exam);
+    let grade = '';
 
-    const { marks } = this.state;
+    const { studentMarkSheet } = this.state;
 
-    var newMarks = [...marks]
+    var newStudentMarkSheet = [...studentMarkSheet]
 
-    var index = newMarks.findIndex(m => m.Id === Id);
+    var index = newStudentMarkSheet.findIndex(student => student.matricule === matricule);
+
     if (index >= 0) {
+
+      if (sum >= 0 && sum < 50) { grade = 'F' }
+      else if (sum >= 50 && sum < 70) { grade = 'C' }
+      else if (sum >= 70 && sum < 80) { grade = 'B' }
+      else if (sum >= 80 && sum <= 100) { grade = 'A' }
+      else { grade = 'NULL' }
+
+      newStudentMarkSheet[index].grade = grade;
+    }
+    return grade;
+
+  }
+
+  onChange(event, cellIndex, matricule) {
+
+    const { studentMarkSheet } = this.state;
+
+    var newStudentMarkSheet = [...studentMarkSheet]
+
+    var index = newStudentMarkSheet.findIndex(student => student.matricule === matricule);
+    if (index > -1) {
       if (cellIndex === 2) {
-        newMarks[index].CA = event.target.value;
+        newStudentMarkSheet[index].ca_mark = event.target.value;
       }
       if (cellIndex === 3) {
-        newMarks[index].Exams = event.target.value;
+        newStudentMarkSheet[index].exam_mark = event.target.value;
+      }
+      if (cellIndex === 4) {
+        newStudentMarkSheet[index].grade = event.target.value;
       }
 
     }
 
-    return this.setState({ marks: newMarks });
+    return this.setState({ studentMarkSheet: newStudentMarkSheet });
   }
 
-  printDocument() {
-    const input = document.getElementById('divToPrint');
-    html2canvas(input)
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'JPEG', 0, 0, 200, 200);
-        // pdf.output('dataurlnewwindow');
-        pdf.save("download.pdf");
+  submitMarks() {
+    this.setState({ loading: true })
+
+    const { studentMarkSheet } = this.state;
+    const { token } = this.props;
+
+    let obj = { marks: studentMarkSheet };
+    console.log(obj);
+    let url = 'https://schoolman-ub.herokuapp.com/api/account/staff/marks';
+    let fetchParams = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(obj)
+    }
+    fetch(url, fetchParams)
+      .then(response => {
+        const statusCode = response.status;
+        const responseJson = response.json();
+        return Promise.all([statusCode, responseJson]);
       })
-    ;
+      .then(res => {
+        console.log(res)
+        this.setState({ course: res });
+        const statusCode = res[0];
+        const responseJson = res[1];
+
+        if (statusCode === 200) {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        } else if (statusCode === 401) {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        } else {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      }).finally(fin => this.setState({ loading: false }))
   }
 
   render() {
+    const { courses, studentMarkSheet, students, loading } = this.state;
 
     return (
       <div className='marksheet shadow br3' id="divToPrint">
         <div style={{ display: 'flex', }}>
           <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1' }}>
             <div style={{ flex: '1' }} className='lable'>
-              Department
+              Courses
                 </div>
             <Form.Group controlId="exampleForm.ControlSelect1"
               style={{ flex: '2', margin: 0 }}>
-              <Form.Control onChange={this.roleChange} as="select" >
-                <option>Computer</option>
-                <option>staff</option>
-                <option>student</option>
+              <Form.Control onChange={this.selectedCourse} as="select" >
+                <option>select courses</option>
+                {courses.map((course) => {
+                  return (
+                    <option>{course.code}</option>
+                  )
+                })}
               </Form.Control>
             </Form.Group>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', margin: '0.5rem 1rem', flex: '1' }}>
             <div style={{ flex: '1' }} className='lable'>
-              Course
+              students
                 </div>
             <Form.Group controlId="exampleForm.ControlSelect1"
               style={{ flex: '2', margin: 0 }}>
-              <Form.Control onChange={this.roleChange} as="select" >
-                <option>Database</option>
-                <option>staff</option>
-                <option>student</option>
+              <Form.Control onChange={this.selectedStudents} as="select" >
+                <option>select students</option>
+                {students.map((student) => {
+                  return (
+                    <option>{student.matricule}</option>
+                  )
+                })}
               </Form.Control>
             </Form.Group>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem' }}>
-            <Button onClick={() => console.log('hello')} variant="primary" type="button">
-              Get course
-            </Button>
           </div>
         </div>
 
-        <div style={{ margin: '0rem 2rem', fontSize: '1.5rem' }}>
-          course name
+        <div style={{ margin: '0rem 2rem', fontSize: '1.5rem', }}>
+          Mark Sheet
         </div>
         <div style={{ margin: '1rem 2rem' }}>
           <Table responsive>
-            <thead>
+            <thead style={{ fontSize: '0.8rem', backgroundColor: '#cccccc90' }}>
               <tr>
                 <th>no</th>
                 <th>Matricule</th>
                 <th>CA/30</th>
                 <th>Exams/70</th>
+                <th>Grade</th>
+                <th>Remove</th>
               </tr>
             </thead>
             <tbody>
-              {this.renderTable()}
+              {this.renderTable(studentMarkSheet)}
             </tbody>
           </Table>
         </div>
 
-        <div style={{ padding: '2rem 2rem'}}>
-          <Button onClick={() => this.printDocument()} variant="primary" type="button">
-            Download pdf
+        <div style={{ padding: '2rem 2rem' }}>
+
+          {
+            loading ?
+              <Spinner animation="border" variant="primary" />
+              :
+              <Button onClick={() => this.submitMarks()} variant="primary" type="button">
+                submit marks
             </Button>
+          }
         </div>
 
 
@@ -157,12 +353,18 @@ class Marksheet extends Component {
   }
 }
 
-export default Marksheet;
+const mapStateToProps = ({ token }) => {
 
+  return {
+    token: token.token
+  }
+}
 
-function Input({ onChange, cellIndex, Id, defaultValue }) {
+export default connect(mapStateToProps, null)(Marksheet);
+
+function Input({ onChange, cellIndex, matricule, defaultValue }) {
   const onInputChange = event => {
-    onChange(event, cellIndex, Id);
+    onChange(event, cellIndex, matricule);
   };
 
   return (
@@ -170,7 +372,7 @@ function Input({ onChange, cellIndex, Id, defaultValue }) {
       type="text"
       value={defaultValue}
       onChange={onInputChange}
-      style={{ borderWidth: '1px', margin: 0, padding: '.5rem 0rem', borderColor: '#cccccc90' }}
+      style={{ borderWidth: '1px', margin: 0, padding: '.3rem 0rem', borderColor: '#cccccc90' }}
     />
   );
 }
