@@ -36,10 +36,6 @@ class Auth extends Component {
     this.setState({ loading: true })
     const { matricule, password, role } = this.state;
 
-    // this.props.setRole(role)
-    // this.props.changeMainRoute('home')
-    // this.props.setToken();
-
     if (matricule.length === 0) {
       return this.setState({ loading: false })
     }
@@ -47,12 +43,8 @@ class Auth extends Component {
       return this.setState({ loading: false })
     }
 
-    // console.log('logged in', matricule, password, role);
-
     var obj = { username: matricule, password, role };
-    console.log('obj', JSON.stringify(obj))
 
-    // let proxyurl = "https://cors-anywhere.herokuapp.com/";
     let url = 'https://schoolman-ub.herokuapp.com/api/auth/login';
     let fetchParams = {
       method: 'POST',
@@ -69,7 +61,6 @@ class Auth extends Component {
       }
       )
       .then(res => {
-        // console.log(res)
         const statusCode = res[0];
         const responseJson = res[1];
 
@@ -77,6 +68,9 @@ class Auth extends Component {
           const {token, user} = responseJson;
           console.log(token)
           console.log(user)
+          if (user.role !== role) {
+            return this.setState({errorMessage: 'You are trying to log in with the Wrong Role check and try again'})
+          }
           this.props.setToken(token);
           this.props.setUser(user);
           this.setState({ loading: false });
@@ -93,11 +87,12 @@ class Auth extends Component {
       })
       .catch(err => {
         console.log(err)
+        this.setState({errorMessage: 'An error occord check fields and try again'})
       }).finally(fin => this.setState({ loading: false }))
   }
 
   render() {
-    const { loading } = this.state;
+    const { loading, errorMessage } = this.state;
 
     return (
       <div className='authCard'>
@@ -160,9 +155,9 @@ class Auth extends Component {
               }
             </div>
 
-            {/* <div className='footerWrapper'>Don't have an account?
-              <span style={{ color: '#00b5cc', fontWeight: '500', marginLeft: '10px' }} className='pointer'>Sign up</span>
-            </div> */}
+              {
+                errorMessage ? <div className='footerWrapper'>{errorMessage}</div> : null
+              }
           </div>
         </div>
 

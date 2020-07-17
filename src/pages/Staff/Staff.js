@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FaRegPlusSquare, FaTrashAlt, FaBookOpen, FaPenFancy, FaSearch } from "react-icons/fa";
-import { Form, Button, Table } from 'react-bootstrap';
+import { Form, Button, Spinner } from 'react-bootstrap';
 import DatePicker from 'react-date-picker';
 import { connect } from 'react-redux';
 
@@ -12,11 +12,12 @@ class Staff extends Component {
     super();
     this.state = {
       type: 'add',
-
+      loading: false,
+      success: false,
       date: new Date(),
 
       name: '',
-      departmentName: '',
+      departmentId: '',
       matricule: '',
       maritalStatus: '',
       email: '',
@@ -37,7 +38,7 @@ class Staff extends Component {
     }
   }
 
-  departmentName = (e) => this.setState({ departmentName: e.target.value });
+  departmentId = (e) => this.setState({ departmentId: e.target.value });
   name = (e) => this.setState({ name: e.target.value });
   matricule = (e) => this.setState({ matricule: e.target.value });
   onDateChange = (e) => this.setState({ date: e });
@@ -50,9 +51,10 @@ class Staff extends Component {
   salary = (e) => this.setState({ salary: e.target.value });
 
   addStaff() {
+    this.setState({loading: true});
     const {
       name,
-      departmentName,
+      departmentId,
       matricule,
       date,
       maritalStatus,
@@ -73,10 +75,10 @@ class Staff extends Component {
       phone: phoneNumber,
       dob: date,
       gender,
-      martital_status: maritalStatus,
-      department: departmentName,
-      job,
-      salary,
+      marital_status: maritalStatus,
+      department_id: Number(departmentId),
+      nature_of_job: job,
+      basic_pay: salary,
     };
     console.log(obj)
     let proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -103,7 +105,7 @@ class Staff extends Component {
 
         if (statusCode === 200) {
           console.log(responseJson)
-
+          this.setState({ loading: false, success: true })
 
         } else if (statusCode === 401) {
           console.log(responseJson)
@@ -119,6 +121,7 @@ class Staff extends Component {
   }
 
   render() {
+    const {loading} = this.state;
 
     return (
       <div>
@@ -159,7 +162,7 @@ class Staff extends Component {
                 date={this.state.date}
                 name={(e) => this.name(e)}
                 matricule={(e) => this.matricule(e)}
-                departmentName={(e) => this.departmentName(e)}
+                departmentId={(e) => this.departmentId(e)}
 
                 onDateChange={(e) => this.onDateChange(e)}
 
@@ -171,6 +174,8 @@ class Staff extends Component {
                 genderStatus={(e) => this.genderStatus(e)}
                 job={(e) => this.job(e)}
                 salary={(e) => this.salary(e)}
+                loading={loading}
+                success={this.state.success}
               />
               :
               null
@@ -189,9 +194,9 @@ class Staff extends Component {
                 maritalStatus={(e) => this.maritalStatus(e)}
                 email={(e) => this.email(e)}
                 phoneNumber={(e) => this.phoneNumber(e)}
-                
+
                 editStaff={() => this.addStaff()}
-                
+
                 password={(e) => this.password(e)}
                 genderStatus={(e) => this.genderStatus(e)}
                 job={(e) => this.job(e)}
@@ -216,7 +221,7 @@ const mapStateToProps = ({ token }) => {
 export default connect(mapStateToProps, null)(Staff);
 
 const AddStaff = (props) => {
-  const { date, name, password, job, salary, matricule, departmentName, onDateChange, maritalStatus, email, phoneNumber, addStaff, genderStatus } = props;
+  const { date, success, loading, name, password, job, salary, matricule, departmentId, onDateChange, maritalStatus, email, phoneNumber, addStaff, genderStatus } = props;
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
       <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Enter Staff information</div>
@@ -254,14 +259,14 @@ const AddStaff = (props) => {
 
       <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '48%' }}>
         <div style={{ flex: '1' }} className='lable'>
-          Department
+          Department id
                 </div>
-        <Form.Group controlId="exampleForm.ControlSelect1"
-          style={{ flex: '2', margin: 0 }}>
+        <Form.Group
+          style={{ flex: '2' , margin: 0 }}>
           <Form.Control
-            onChange={departmentName}
+            onChange={departmentId}
             type="department"
-            placeholder="department"
+            placeholder="department id"
             className='form'
           />
         </Form.Group>
@@ -334,8 +339,9 @@ const AddStaff = (props) => {
             style={{ flex: '2', margin: 0 }}>
             <Form.Control onChange={maritalStatus} as="select"
               className='form' >
-              <option>Single</option>
-              <option>Married</option>
+              <option>select status</option>
+              <option>single</option>
+              <option>married</option>
             </Form.Control>
           </Form.Group>
         </div>
@@ -347,9 +353,10 @@ const AddStaff = (props) => {
             style={{ flex: '2', margin: 0 }}>
             <Form.Control onChange={genderStatus} as="select"
               className='form' >
-              <option>Male</option>
-              <option>Femail</option>
-              <option>Other</option>
+              <option>select gender</option>
+              <option>male</option>
+              <option>female</option>
+              <option>other</option>
             </Form.Control>
           </Form.Group>
         </div>
@@ -387,10 +394,22 @@ const AddStaff = (props) => {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem' }}>
-        <Button onClick={() => addStaff()} variant="primary" type="button">
-          Save
+        {
+          loading ?
+            <Spinner animation="border" variant="info" />
+            :
+            <Button onClick={() => addStaff()} variant="primary" type="button">
+              Save
             </Button>
+        }
       </div>
+      {
+        success ?
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'green', fontSize: '1.2rem' }}>
+            successfully registered Staff
+          </div>
+          : null
+      }
     </div>
   )
 }

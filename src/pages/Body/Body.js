@@ -7,7 +7,7 @@ import Results from '../Results/Results';
 import Main from '../Main/Main';
 import Faculties from '../Faculties/Faculties';
 import RegisterCourse from '../RegisterCourse/RegisterCourse';
-// import Courses from '../Courses/Courses';
+import Courses from '../Courses/Courses';
 import Addmarks from '../Addmarks/Addmarks';
 import Departments from '../Departments/Departments';
 
@@ -41,6 +41,10 @@ class Body extends Component {
     
     if (route === 'Faculties') {
       return <Faculties/>;
+    }
+
+    if (route === 'Courses') {
+      return <Courses/>;
     }
 
     if (route === 'RegisterCourse') {

@@ -8,18 +8,20 @@ import './Results.scss';
 
 
 class Results extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       type: '',
       semester: '',
       results: [],
+      year: '',
       loading: false,
+      user: props.user
     }
   }
 
   getSemester = (e) => this.setState({ semester: e.target.value })
-  getYear = (e) => this.setState.setState({ results: e.target.value })
+  getYear = (e) => this.setState({ year: e.target.value })
 
   getResults() {
     const { token } = this.props;
@@ -44,8 +46,8 @@ class Results extends Component {
   }
 
   render() {
-    const { results, loading, semester } = this.state;
-
+    const { results, loading, semester, user, year } = this.state;
+    console.log(user);
     return (
       <div>
 
@@ -112,7 +114,7 @@ class Results extends Component {
             <div style={{ marginTop: '2rem' }}>
               {
                 this.state.type === 'results' ?
-                  <StudentsResults results={results} semester={semester} />
+                  <StudentsResults results={results} semester={semester} user={user} year={year}/>
                   :
                   null
 
@@ -126,10 +128,11 @@ class Results extends Component {
   }
 }
 
-const mapStateToProps = ({ token }) => {
+const mapStateToProps = ({ token, user }) => {
 
   return {
-    token: token.token
+    token: token.token,
+    user: user.user
   }
 }
 

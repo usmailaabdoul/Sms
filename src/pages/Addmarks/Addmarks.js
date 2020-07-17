@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FaRegPlusSquare, FaTrashAlt, FaBookOpen, FaPenFancy, FaSearch } from "react-icons/fa";
-
+import { Spinner } from 'react-bootstrap';
 import './Addmarks.scss';
 import Marksheet from '../../components/Marksheet/Marksheet'
 
@@ -9,11 +9,12 @@ class Addmarks extends Component {
   constructor() {
     super();
     this.state = {
-      type: 'add'
+      type: 'add',
+      loadingCourse: false,
     }
   }
   render() {
-
+  
     return (
       <div>
 
@@ -23,7 +24,14 @@ class Addmarks extends Component {
               <p>Add student marks</p>
             </div>
             <div style={{ flex: 1, backgroundColor: '#3C77F7' }} className='cardWrapperIcon'>
-              <FaRegPlusSquare />
+              
+            {
+                this.state.loadingCourse ?
+                  <Spinner animation="border" variant="light" />
+                  :
+                  <FaRegPlusSquare />
+              }
+              
             </div>
           </div>
 
@@ -41,7 +49,9 @@ class Addmarks extends Component {
         <div style={{ marginTop: '2rem' }}>
           {
             this.state.type === 'add' ?
-              <Marksheet />
+              <Marksheet 
+                loadingCourse={(loadingCourse) => this.setState({loadingCourse})}
+              />
               :
               null
           }

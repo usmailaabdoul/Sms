@@ -4,20 +4,21 @@ import { connect } from 'react-redux';
 import DatePicker from 'react-date-picker';
 
 class UserModal extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       loading: false,
       success: false,
       date: new Date(),
 
-      email: '',
+      email: props.user.email,
       password: '',
       phoneNumber: '',
       maritalStatus: '',
       matricule: '',
       dob: '',
-      name: '',
+      name: props.user.name,
+      department_id: '',
     }
   }
 
@@ -25,6 +26,7 @@ class UserModal extends Component {
   name = (e) => this.setState({ name: e.target.value });
   password = (e) => this.setState({ password: e.target.value });
   phoneNumber = (e) => this.setState({ phoneNumber: e.target.value });
+  department_id = (e) => this.setState({ department_id: e.target.value });
   maritalStatus = (e) => this.setState({ maritalStatus: e.target.value });
   matricule = (e) => this.setState({ matricule: e.target.value });
   onDateChange = (e) => this.setState({ dob: e, date: e });
@@ -32,7 +34,7 @@ class UserModal extends Component {
 
   updateInfo() {
     this.setState({ loading: true })
-    const { email, name, password, phoneNumber, maritalStatus, matricule, dob } = this.state;
+    const { email, name, password, phoneNumber, maritalStatus, matricule, dob, department_id } = this.state;
 
     const { token } = this.props;
     const { role } = this.props;
@@ -41,15 +43,15 @@ class UserModal extends Component {
 
     let url = ''
     let obj = {};
-    let date = `${dob}`;
     if (role === 'admin') {
       obj = {
+        email,
         name,
         password,
         phone: phoneNumber,
         marital_status: maritalStatus,
         matricule,
-        dob: date,
+        dob,
       }
       url = 'https://schoolman-ub.herokuapp.com/api/admin';
     } else if (role === 'staff') {
@@ -58,6 +60,7 @@ class UserModal extends Component {
         password,
         phone: phoneNumber,
         marital_status: maritalStatus,
+        department_id: Number(department_id)
       }
       url = 'https://schoolman-ub.herokuapp.com/api/account/staff';
     } else {
@@ -66,6 +69,7 @@ class UserModal extends Component {
         password,
         phone: phoneNumber,
         marital_status: maritalStatus,
+        department_id: Number(department_id),
       }
       url = 'https://schoolman-ub.herokuapp.com/api/account/student';
     }
@@ -138,6 +142,7 @@ class UserModal extends Component {
               <Form.Control
                 onChange={this.email}
                 type="email"
+                value={user.email}
                 placeholder="you@gmail.com"
                 className='form'
               />
@@ -153,12 +158,28 @@ class UserModal extends Component {
                 <Form.Control
                   onChange={this.name}
                   type="text"
+                  value={user.name}
                   placeholder="name"
                   className='form'
                 />
               </Form.Group>
             </div>
-            : null}
+            :
+            <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '70%' }}>
+              <div style={{ flex: '1', marginRight: '1rem' }} className='lable'>
+                department id
+              </div>
+              <Form.Group
+                style={{ flex: '2', margin: 0 }}>
+                <Form.Control
+                  onChange={this.department_id}
+                  type="text"
+                  placeholder="name"
+                  className='form'
+                />
+              </Form.Group>
+            </div>
+          }
           <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '70%' }}>
             <div style={{ flex: '1', marginRight: '1rem' }} className='lable'>
               Password
@@ -213,7 +234,7 @@ class UserModal extends Component {
               <Form.Control
                 onChange={this.phoneNumber}
                 type="text"
-                placeholder=""
+                placeholder="number"
                 className='form'
               />
             </Form.Group>
@@ -227,8 +248,8 @@ class UserModal extends Component {
               <Form.Control onChange={this.maritalStatus} as="select"
                 className='form' >
                 <option>select status</option>
-                <option>Single</option>
-                <option>Married</option>
+                <option>single</option>
+                <option>married</option>
               </Form.Control>
             </Form.Group>
           </div>

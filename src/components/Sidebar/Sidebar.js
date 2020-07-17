@@ -112,6 +112,16 @@ class Sidebar extends Component {
 
           <div
             className='pointer'
+            onClick={() => this.handleRoute('Courses')}
+            style={{ color: route === 'Courses' ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
+            <div>
+              <span style={{ position: 'relative', bottom: 2 }}><GiBookshelf /></span> Courses
+                  </div>
+            <div><FaAngleRight /></div>
+          </div>
+
+          <div
+            className='pointer'
             onClick={() => this.handleRoute('Students')}
             style={{ color: route === 'Students' ? '#00b5cc' : '#000000ad', display: 'flex', marginBottom: '20px', justifyContent: 'space-between' }}>
             <div>

@@ -16,7 +16,7 @@ class Students extends Component {
       date: new Date(),
 
       studentName: '',
-      departmentName: '',
+      departmentId: '',
       studentMatricule: '',
       maritalStatus: '',
       email: '',
@@ -40,7 +40,7 @@ class Students extends Component {
     }
   }
 
-  departmentName = (e) => this.setState({ departmentName: e.target.value });
+  departmentId = (e) => this.setState({ departmentId: e.target.value });
   studentName = (e) => this.setState({ studentName: e.target.value });
   studentMatricule = (e) => this.setState({ studentMatricule: e.target.value });
   onDateChange = (e) => this.setState({ date: e });
@@ -66,7 +66,7 @@ class Students extends Component {
     this.setState({ loading: true })
     const {
       studentName,
-      departmentName,
+      departmentId,
       studentMatricule,
       date,
       maritalStatus,
@@ -86,12 +86,11 @@ class Students extends Component {
       dob: date,
       gender,
       marital_status: maritalStatus,
-      department: departmentName,
+      department_id: Number(departmentId),
     };
     console.log(obj)
 
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = 'https://schoolman-ub.herokuapp.com/api/admin/student';
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/students';
     let fetchParams = {
       method: 'POST',
       headers: {
@@ -100,7 +99,7 @@ class Students extends Component {
       },
       body: JSON.stringify(obj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => {
         const statusCode = response.status;
         const responseJson = response.json();
@@ -157,8 +156,7 @@ class Students extends Component {
       department: editdepartmentName,
     };
     console.log(obj)
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = `https://schoolman-ub.herokuapp.com/api/admin/student${id}`;
+    let url = `https://schoolman-ub.herokuapp.com/api/admin/students/${id}`;
     let fetchParams = {
       method: 'PUT',
       headers: {
@@ -167,7 +165,7 @@ class Students extends Component {
       },
       body: JSON.stringify(obj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch( url, fetchParams)
       .then(response => {
         const statusCode = response.status;
         const responseJson = response.json();
@@ -237,7 +235,7 @@ class Students extends Component {
                 date={this.state.date}
                 studentName={(e) => this.studentName(e)}
                 studentMatricule={(e) => this.studentMatricule(e)}
-                departmentName={(e) => this.departmentName(e)}
+                departmentId={(e) => this.departmentId(e)}
 
                 onDateChange={(e) => this.onDateChange(e)}
 
@@ -301,7 +299,7 @@ const mapStateToProps = ({ token }) => {
 export default connect(mapStateToProps, null)(Students);
 
 const Addstudent = (props) => {
-  const { success, loading, date, studentName, password, studentMatricule, departmentName, onDateChange, maritalStatus, email, phoneNumber, addStudent, genderStatus } = props;
+  const { success, loading, date, studentName, password, studentMatricule, departmentId, onDateChange, maritalStatus, email, phoneNumber, addStudent, genderStatus } = props;
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
       <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Enter students information</div>
@@ -339,14 +337,14 @@ const Addstudent = (props) => {
 
       <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '48%' }}>
         <div style={{ flex: '1' }} className='lable'>
-          Department
+          Department Id
                 </div>
         <Form.Group controlId="exampleForm.ControlSelect1"
           style={{ flex: '2', margin: 0 }}>
           <Form.Control
-            onChange={departmentName}
+            onChange={departmentId}
             type="department"
-            placeholder="department"
+            placeholder="department id"
             className='form'
           />
         </Form.Group>
@@ -419,9 +417,9 @@ const Addstudent = (props) => {
             style={{ flex: '2', margin: 0 }}>
             <Form.Control onChange={maritalStatus} as="select"
               className='form' >
-              <option>select</option>
-              <option>Single</option>
-              <option>Married</option>
+              <option>select status</option>
+              <option>single</option>
+              <option>married</option>
             </Form.Control>
           </Form.Group>
         </div>
@@ -433,10 +431,10 @@ const Addstudent = (props) => {
             style={{ flex: '2', margin: 0 }}>
             <Form.Control onChange={genderStatus} as="select"
               className='form' >
-              <option>select</option>
-              <option>Male</option>
-              <option>Femail</option>
-              <option>Other</option>
+              <option>select gender</option>
+              <option>male</option>
+              <option>femail</option>
+              <option>other</option>
             </Form.Control>
           </Form.Group>
         </div>

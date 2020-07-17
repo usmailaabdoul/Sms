@@ -43,8 +43,7 @@ class Faculties extends Component {
 
     var obj = { name: facultyName };
     console.log(obj)
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = 'https://schoolman-ub.herokuapp.com/api/admin/faculty';
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/faculties';
     let fetchParams = {
       method: 'post',
       headers: {
@@ -53,7 +52,7 @@ class Faculties extends Component {
       },
       body: JSON.stringify(obj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => {
         const statusCode = response.status;
         const responseJson = response.json();
@@ -91,8 +90,7 @@ class Faculties extends Component {
 
     const { token } = this.props;
     console.log(obj)
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = `https://schoolman-ub.herokuapp.com/api/admin/faculty/${id}`;
+    let url = `https://schoolman-ub.herokuapp.com/api/admin/faculties/${id}`;
     let fetchParams = {
       method: 'PUT',
       headers: {
@@ -101,7 +99,7 @@ class Faculties extends Component {
       },
       body: JSON.stringify(obj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => response.json())
       .then(res => {
         console.log(res)
@@ -119,8 +117,7 @@ class Faculties extends Component {
     var id = deleteFacultyid;
 
     const { token } = this.props;
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = `https://schoolman-ub.herokuapp.com/api/admin/faculty/${id}`;
+    let url = `https://schoolman-ub.herokuapp.com/api/admin/faculties/${id}`;
     let fetchParams = {
       method: 'DELETE',
       headers: {
@@ -128,11 +125,16 @@ class Faculties extends Component {
         Authorization: `Bearer ${token}`
       },
     }
-    fetch(proxyurl + url, fetchParams)
-      .then(response => response.json())
+    fetch(url, fetchParams)
+      .then(response => response)
       .then(res => {
-        console.log(res)
-        this.setState({ loading: false, deletesuccess: true });
+        // console.log(res)
+        const statusCode = res.status;
+        console.log(statusCode)
+        if (statusCode === 200) {
+          console.log('res', res)
+          this.setState({ loading: false, deletesuccess: true, deleteFacultyid: '' });
+        }
       })
       .catch(err => {
         console.log(err)
@@ -340,7 +342,7 @@ const DeleteFaculty = (props) => {
       <div style={{ display: 'flex', }}>
         <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '50%' }}>
           <div style={{ flex: '1' }} className='lable'>
-              faculty Id
+            faculty Id
                 </div>
           <Form.Group controlId="exampleForm.ControlSelect1"
             style={{ flex: '2', margin: 0 }}>

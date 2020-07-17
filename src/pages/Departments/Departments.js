@@ -16,8 +16,10 @@ class Departments extends Component {
       departmentName: '',
 
       editDepartmentName: '',
-      editfacultyName: '',
+      editDepartmentId: '',
+      editfacultyId: '',
       facultyName: '',
+      facultyId: '',
       departmentId: '',
 
       success: false,
@@ -29,26 +31,28 @@ class Departments extends Component {
 
   departmentName = (e) => this.setState({ departmentName: e.target.value });
   facultyName = (e) => this.setState({ facultyName: e.target.value });
+  facultyId = (e) => this.setState({ facultyId: e.target.value });
 
   editDepartmentName = (e) => this.setState({ editDepartmentName: e.target.value });
-  editfacultyName = (e) => this.setState({ editfacultyName: e.target.value });
+  editDepartmentId = (e) => this.setState({ editDepartmentId: e.target.value });
+  editfacultyId = (e) => this.setState({ editfacultyId: e.target.value });
 
 
   departmentId = (e) => this.setState({ departmentId: e.target.value });
 
   addDepartment = () => {
     this.setState({ loading: true });
-    const { facultyName, departmentName } = this.state;
+    const { facultyName, departmentName, facultyId } = this.state;
     const { token } = this.props;
 
     var obj = {
       name: departmentName,
       faculty: facultyName,
+      faculty_id: facultyId,
     };
 
     console.log(obj)
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = 'https://schoolman-ub.herokuapp.com/api/admin/department';
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/departments';
     let fetchParams = {
       method: 'post',
       headers: {
@@ -57,7 +61,7 @@ class Departments extends Component {
       },
       body: JSON.stringify(obj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => {
         const statusCode = response.status;
         const responseJson = response.json();
@@ -88,15 +92,14 @@ class Departments extends Component {
 
   editDepartment = () => {
     this.setState({ loading: true })
-    const { editfacultyName, editfacultyid } = this.state;
+    const { editDepartmentName, editfacultyId, editDepartmentId } = this.state;
 
-    var obj = { name: editfacultyName };
-    var id = editfacultyid;
+    var obj = { name: editDepartmentName, faculty_id: editfacultyId };
+    var id = editDepartmentId;
 
     const { token } = this.props;
     console.log(obj)
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = `https://schoolman-ub.herokuapp.com/api/admin/faculty/${id}`;
+    let url = `https://schoolman-ub.herokuapp.com/api/admin/departments/${id}`;
     let fetchParams = {
       method: 'PUT',
       headers: {
@@ -105,7 +108,7 @@ class Departments extends Component {
       },
       body: JSON.stringify(obj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => response.json())
       .then(res => {
         console.log(res)
@@ -116,15 +119,14 @@ class Departments extends Component {
       }).finally(fin => this.setState({ loading: false }))
   }
 
-  deleteFaculty = () => {
+  deleteDepartment = () => {
     this.setState({ loading: true })
-    const { deleteFacultyid } = this.state;
+    const { departmentId } = this.state;
 
-    var id = deleteFacultyid;
-
+    var id = departmentId;
+    console.log(id)
     const { token } = this.props;
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = `https://schoolman-ub.herokuapp.com/api/admin/faculty/${id}`;
+    let url = `https://schoolman-ub.herokuapp.com/api/admin/departments/${id}`;
     let fetchParams = {
       method: 'DELETE',
       headers: {
@@ -132,11 +134,15 @@ class Departments extends Component {
         Authorization: `Bearer ${token}`
       },
     }
-    fetch(proxyurl + url, fetchParams)
-      .then(response => response.json())
+    fetch(url, fetchParams)
+      .then(response => response)
       .then(res => {
-        console.log(res)
-        this.setState({ loading: false, deletesuccess: true });
+        // console.log(res)
+        const statusCode = res.status;
+        if (statusCode === 200) {
+          console.log(res)
+          this.setState({ loading: false, deletesuccess: true, departmentId: '' });
+        }
       })
       .catch(err => {
         console.log(err)
@@ -184,6 +190,7 @@ class Departments extends Component {
             this.state.type === 'add' ?
               <AddDepartment
                 facultyName={(e) => this.facultyName(e)}
+                facultyId={(e) => this.facultyId(e)}
                 addDepartment={() => this.addDepartment()}
                 departmentName={(e) => this.departmentName(e)}
                 loading={this.state.loading}
@@ -197,7 +204,8 @@ class Departments extends Component {
             this.state.type === 'edit' ?
               <EditDepartment
                 editDepartmentName={(e) => this.editDepartmentName(e)}
-                editfacultyName={(e) => this.editfacultyName(e)}
+                editDepartmentId={(e) => this.editDepartmentId(e)}
+                editfacultyId={(e) => this.editfacultyId(e)}
                 editDepartment={() => this.editDepartment()}
                 loading={this.state.loading}
                 editsuccess={this.state.editsuccess}
@@ -212,6 +220,7 @@ class Departments extends Component {
                 departmentId={(e) => this.departmentId(e)}
                 loading={this.state.loading}
                 deletedSuccess={this.state.deletedSuccess}
+                deleteDepartment={() => this.deleteDepartment()}
               />
               :
               null
@@ -234,26 +243,25 @@ const mapStateToProps = ({ token }) => {
 export default connect(mapStateToProps, null)(Departments);
 
 const AddDepartment = (props) => {
-  const { facultyName, departmentName, addDepartment, success, loading } = props;
+  const { facultyName, facultyId, departmentName, addDepartment, success, loading } = props;
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
       <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Enter information</div>
-      <div style={{ display: 'flex', }}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
-          <div style={{ flex: '1' }} className='lable'>
-            Department name
+      <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '48%' }}>
+        <div style={{ flex: '1' }} className='lable'>
+          Department name
                 </div>
-          <Form.Group controlId="exampleForm.ControlSelect1"
-            style={{ flex: '2', margin: 0 }}>
-            <Form.Control
-              onChange={departmentName}
-              type="text"
-              placeholder="Department name"
-              className='form'
-            />
-          </Form.Group>
-        </div>
-
+        <Form.Group controlId="exampleForm.ControlSelect1"
+          style={{ flex: '2', margin: 0 }}>
+          <Form.Control
+            onChange={departmentName}
+            type="text"
+            placeholder="Department name"
+            className='form'
+          />
+        </Form.Group>
+      </div>
+      <div style={{ display: 'flex', }}>
         <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
           <div style={{ flex: '1' }} className='lable'>
             Faculty name
@@ -268,6 +276,22 @@ const AddDepartment = (props) => {
             />
           </Form.Group>
         </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
+          <div style={{ flex: '1' }} className='lable'>
+            Faculty id
+                </div>
+          <Form.Group controlId="exampleForm.ControlSelect1"
+            style={{ flex: '2', margin: 0 }}>
+            <Form.Control
+              onChange={facultyId}
+              type="text"
+              placeholder="Department name"
+              className='form'
+            />
+          </Form.Group>
+        </div>
+
 
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem' }}>
           {
@@ -293,13 +317,13 @@ const AddDepartment = (props) => {
 }
 
 const EditDepartment = (props) => {
-  const { editDepartmentName, editfacultyName, editDepartment, editsuccess, loading } = props;
+  const { editDepartmentName, editfacultyId, editDepartmentId, editDepartment, editsuccess, loading } = props;
 
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
       <div style={{ fontSize: '1.5rem', margin: '0rem 1rem' }}>Edit Department information</div>
       <div style={{ display: 'flex', }}>
-        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1' }}>
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
           <div style={{ flex: '1' }} className='lable'>
             Department name
                 </div>
@@ -313,16 +337,36 @@ const EditDepartment = (props) => {
             />
           </Form.Group>
         </div>
+
         <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>
+
           <div style={{ flex: '1' }} className='lable'>
-            Faculty
+          Department id
+          </div>
+          <Form.Group controlId="exampleForm.ControlSelect1"
+            style={{ flex: '2', margin: 0 }}>
+            <Form.Control
+              onChange={editDepartmentId}
+              type="text"
+              placeholder="department id"
+              className='form'
+            />
+          </Form.Group>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', }}>
+
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', width: '48%' }}>
+          <div style={{ flex: '1' }} className='lable'>
+            Faculty id
                 </div>
           <Form.Group controlId="exampleForm.ControlSelect1"
             style={{ flex: '2', margin: 0 }}>
             <Form.Control
-              onChange={editfacultyName}
+              onChange={editfacultyId}
               type="text"
-              placeholder="Faculty"
+              placeholder="Faculty id"
               className='form'
             />
           </Form.Group>
@@ -339,6 +383,8 @@ const EditDepartment = (props) => {
           }
         </div>
       </div>
+
+
       {
         editsuccess ?
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'green', fontSize: '1.2rem' }}>
@@ -351,7 +397,7 @@ const EditDepartment = (props) => {
 }
 
 const DeleteDepartment = (props) => {
-  const { departmentId, loading, deletedSuccess } = props;
+  const { departmentId, loading, deletedSuccess, deleteDepartment } = props;
 
   return (
     <div style={{ backgroundColor: '#fcfbfb', margin: '2rem 3rem', padding: '2rem' }} className='shadow-5 br3'>
@@ -377,7 +423,7 @@ const DeleteDepartment = (props) => {
             loading ?
               <Spinner animation="border" variant="info" />
               :
-              <Button onClick={() => console.log('hello')} variant="danger" type="button">
+              <Button onClick={() => deleteDepartment()} variant="danger" type="button">
                 Delete course
             </Button>
           }

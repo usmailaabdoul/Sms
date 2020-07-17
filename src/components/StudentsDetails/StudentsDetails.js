@@ -4,6 +4,7 @@ import { Form, Button, Table } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import html2pdf from 'html2pdf.js';
 import img from '../../res/img/gradImg.png';
+import Moment from 'react-moment';
 
 import './StudentsDetails.scss';
 
@@ -25,15 +26,14 @@ class StudentsDetails extends Component {
   }
 
   getStudents(token) {
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let url = 'https://schoolman-ub.herokuapp.com/api/admin/student';
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/students';
     let fetchParams = {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
       // headers: {'Content-Type': 'application/json'},
       // body: JSON.stringify(obj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch( url, fetchParams)
       .then(response => response.json())
       .then(res => {
         console.log(res)
@@ -48,7 +48,7 @@ class StudentsDetails extends Component {
   printDocument() {
     var element = document.getElementById('divToPrint');
     var opt = {
-      filename: 'Results.pdf',
+      filename: 'Students Details.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: {
         scale: 2, scrollY: 0, scrollX: 0,
@@ -97,7 +97,7 @@ class StudentsDetails extends Component {
               <p style={{ margin: '0' }}>Staff Report</p>
               <p style={{ margin: '0' }}>first semester</p>
               <p style={{ margin: '0' }}>year: 2019/2020</p>
-              <p style={{ margin: '0' }}>date: today</p>
+              <p style={{ margin: '0' }}>date:  <Moment format="YYYY/MM/DD" /></p>
             </div>
           </div>
           <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem', fontSize: '1.5rem'}}>

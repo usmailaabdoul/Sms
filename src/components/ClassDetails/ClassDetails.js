@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { } from "react-icons/fa";
 import { Form, Button, Table } from 'react-bootstrap';
-import { FaGraduationCap } from "react-icons/fa";
+
 import html2pdf from 'html2pdf.js';
 import img from '../../res/img/gradImg.png';
-
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import Moment from 'react-moment';
 
 import './ClassDetails.scss';
 
@@ -52,7 +50,7 @@ class ClassDetails extends Component {
   printDocument() {
     var element = document.getElementById('divToPrint');
     var opt = {
-      filename: 'Results.pdf',
+      filename: 'Class details.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: {
         scale: 2, scrollY: 0, scrollX: 0,
@@ -101,7 +99,7 @@ class ClassDetails extends Component {
               <p style={{ margin: '0' }}>Department: computer Department</p>
               <p style={{ margin: '0' }}>semester: first semester</p>
               <p style={{ margin: '0' }}>year: 2019/2020</p>
-              <p style={{ margin: '0' }}>date: today</p>
+              <p style={{ margin: '0' }}>date: <Moment format="YYYY/MM/DD" /></p>
             </div>
           </div>
           <div>

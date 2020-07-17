@@ -16,6 +16,9 @@ class Fee extends Component {
     }
   }
 
+  componentDidMount() {
+    this.getFees()
+  }
   makePayment = (e) => this.setState({ amount: e.target.value })
 
   getFees() {

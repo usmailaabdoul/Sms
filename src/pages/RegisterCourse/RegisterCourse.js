@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Form, Button, Table, Spinner } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import html2pdf from 'html2pdf.js';
+import { GiBookshelf } from 'react-icons/gi'
 
 import './RegisterCourse.scss';
 
@@ -15,6 +16,7 @@ class RegisterCourse extends Component {
       obj: [],
       finished: false,
       loading: false,
+      loadingCourse: false
     }
   }
 
@@ -29,7 +31,7 @@ class RegisterCourse extends Component {
 
     let newcourse = courses.find((c) => c.code === code);
     let newBodyObj = newcourse.code
-    let newObj = [...obj, {code: newBodyObj}];
+    let newObj = [...obj, { code: newBodyObj }];
 
     let newSelectedCourses = [...selectedCourses, newcourse]
     this.setState({ selectedCourses: newSelectedCourses, obj: newObj })
@@ -53,9 +55,10 @@ class RegisterCourse extends Component {
   }
 
   getCourses = () => {
+    this.setState({ loadingCourse: true })
+
     const { token } = this.props;
 
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
     let url = 'https://schoolman-ub.herokuapp.com/api/account/student/courses';
     let fetchParams = {
       method: 'GET',
@@ -64,7 +67,7 @@ class RegisterCourse extends Component {
         Authorization: `Bearer ${token}`
       },
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => {
         const statusCode = response.status;
         const responseJson = response.json();
@@ -78,7 +81,7 @@ class RegisterCourse extends Component {
 
         if (statusCode === 200) {
           console.log(responseJson)
-          this.setState({ courses: responseJson })
+          this.setState({ courses: responseJson, loadingCourse: false  })
         } else if (statusCode === 401) {
           console.log(responseJson)
           this.setState({ loading: false })
@@ -98,9 +101,8 @@ class RegisterCourse extends Component {
     const { token } = this.props;
     const { obj } = this.state;
 
-    let bodyObj = {codes: obj}
+    let bodyObj = { codes: obj }
     console.log(bodyObj);
-    // let proxyurl = "https://cors-anywhere.herokuapp.com/";
     let url = 'https://schoolman-ub.herokuapp.com/api/account/student/courses';
     let fetchParams = {
       method: 'POST',
@@ -154,79 +156,97 @@ class RegisterCourse extends Component {
   }
 
   render() {
-    const { courses, selectedCourses, finished, loading } = this.state;
+    const { courses, selectedCourses, finished, loading, loadingCourse } = this.state;
 
     return (
-      <div style={{ margin: '2rem 1rem 1rem 0rem', padding: '0rem 0rem 2rem 0rem', backgroundColor: '#fff', }}>
-        <div style={{ display: 'flex', }}>
-          <Form.Group style={{ flex: 1.5, margin: '4.5rem 1rem' }}>
-            <Form.Control onChange={this.selectedCourse} as="select"
-              className='form' >
-              <option>select courses</option>
-              {courses.map((c) => {
-                return (
-                  <option>{c.code}</option>
-                )
-              })}
-            </Form.Control>
-          </Form.Group>
-
-          <div style={{ flex: 5, padding: '1rem' }} id="divToPrint">
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>Registered Courses</div>
-            <Table striped hover responsive>
-              <thead style={{ backgroundColor: '#cccccc', color: 'white', fontSize: '.8rem', margin: '0' }}>
-                <tr>
-                  <th>S/n</th>
-                  <th>Course code</th>
-                  <th>Course title</th>
-                  <th>Credits</th>
-                  <th>remove</th>
-                </tr>
-              </thead>
-              <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', fontSize: '.8rem' }}>
-                {selectedCourses ? selectedCourses.map((s, rowIndex) => {
-                  return (
-                    <tr key={rowIndex} style={{ color: '#00000090', fontSize: '0.8rem' }}>
-                      <td>{s.id}</td>
-                      <td>{s.code}</td>
-                      <td>{s.title}</td>
-                      <td>{s.credits}</td>
-                      <td>
-                        <div onClick={() => this.removeCourse(s.code)} style={{ color: 'red' }} className='pointer grow'>
-                        delete course
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                }) : null}
-              </tbody>
-            </Table>
-
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', marginTop: '1rem' }}>
+      <div>
+        <div style={{ margin: '0rem 3rem' }}>
+          <div onClick={() => this.getFees()} className='cardWrapper shadow-4 grow pointer'>
+            <div style={{ flex: 1.5 }} className='cardWrapperTitle'>
+              <p>Register your Courses</p>
+            </div>
+            <div style={{ flex: 1, backgroundColor: '#3C77F7' }} className='cardWrapperIcon'>
               {
-                loading ?
-                  <Spinner animation="border" variant="primary" />
+                loadingCourse ?
+                  <Spinner animation="border" variant="light" />
                   :
-                  <Button onClick={() => this.RegisterCourseCourse()} variant="primary" type="button">
-                    Register courses
-              </Button>
+                  <GiBookshelf />
               }
             </div>
           </div>
-
         </div>
+        <div style={{ margin: '2rem 1rem 1rem 0rem', padding: '0rem 0rem 2rem 0rem', backgroundColor: '#fff', }}>
+          <div style={{ display: 'flex', }}>
+            <Form.Group style={{ flex: 1.5, margin: '4.5rem 1rem' }}>
+              <Form.Control onChange={this.selectedCourse} as="select"
+                className='form' >
+                <option>select courses</option>
+                {courses.map((c) => {
+                  return (
+                    <option>{c.code}</option>
+                  )
+                })}
+              </Form.Control>
+            </Form.Group>
 
-        <div style={{ marginLeft: '1rem', padding: '0rem 1rem', }}>
-          {
-            finished ?
-              <Button onClick={() => this.printDocument()} variant="primary" type="button">
-                Download form B
+            <div style={{ flex: 5, padding: '1rem' }} id="divToPrint">
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>Registered Courses</div>
+              <Table striped hover responsive>
+                <thead style={{ backgroundColor: '#cccccc', color: 'white', fontSize: '.8rem', margin: '0' }}>
+                  <tr>
+                    <th>S/n</th>
+                    <th>Course code</th>
+                    <th>Course title</th>
+                    <th>Credits</th>
+                    <th>remove</th>
+                  </tr>
+                </thead>
+                <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', fontSize: '.8rem' }}>
+                  {selectedCourses ? selectedCourses.map((s, rowIndex) => {
+                    return (
+                      <tr key={rowIndex} style={{ color: '#00000090', fontSize: '0.8rem' }}>
+                        <td>{s.id}</td>
+                        <td>{s.code}</td>
+                        <td>{s.title}</td>
+                        <td>{s.credits}</td>
+                        <td>
+                          <div onClick={() => this.removeCourse(s.code)} style={{ color: 'red' }} className='pointer grow'>
+                            delete course
+                        </div>
+                        </td>
+                      </tr>
+                    )
+                  }) : null}
+                </tbody>
+              </Table>
+
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', marginTop: '1rem' }}>
+                {
+                  loading ?
+                    <Spinner animation="border" variant="primary" />
+                    :
+                    <Button onClick={() => this.RegisterCourseCourse()} variant="primary" type="button">
+                      Register courses
               </Button>
-              :
-              null
-          }
+                }
+              </div>
+            </div>
+
+          </div>
+
+          <div style={{ marginLeft: '1rem', padding: '0rem 1rem', }}>
+            {
+              finished ?
+                <Button onClick={() => this.printDocument()} variant="primary" type="button">
+                  Download form B
+              </Button>
+                :
+                null
+            }
+          </div>
         </div>
       </div>
+
     )
   }
 }

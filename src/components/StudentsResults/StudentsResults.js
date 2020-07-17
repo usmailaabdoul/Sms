@@ -16,14 +16,7 @@ class StudentsResults extends Component {
     super();
 
     this.state = {
-      marks: [
-        { Id: 1, CA: '10', Exams: '10', courseCode: 'CEF 438', CourseTitle: 'Database', finalMark: '10', grade: '10' },
-        { Id: 2, CA: '10', Exams: '10', courseCode: 'CEF 442', CourseTitle: 'Inernet programming', finalMark: '10', grade: '10' },
-        { Id: 3, CA: '10', Exams: '10', courseCode: 'CEF 421', CourseTitle: 'Human comouter interface', finalMark: '10', grade: '10' },
-        { Id: 4, CA: '10', Exams: '10', courseCode: 'CEF 460', CourseTitle: 'Image processing', finalMark: '10', grade: '10' },
-        { Id: 5, CA: '10', Exams: '10', courseCode: 'CEF 460', CourseTitle: 'Image processing', finalMark: '10', grade: '10' },
-        { Id: 6, CA: '10', Exams: '10', courseCode: 'CEF 460', CourseTitle: 'Image processing', finalMark: '10', grade: '10' },
-      ],
+      marks: [],
       loading: 'false',
     }
   }
@@ -63,7 +56,7 @@ class StudentsResults extends Component {
   }
 
   render() {
-    const { semester } = this.props;
+    const { semester, user, year } = this.props;
 
     return (
       <div >
@@ -84,8 +77,8 @@ class StudentsResults extends Component {
             }}
           >
             <div style={{ flex: 2, justifyContent: 'flex-start', }}>
-              <p style={{ margin: '0' }}>Name: student Name</p>
-              <p style={{ margin: '0' }}>Matricule: Matricule</p>
+              <p style={{ margin: '0' }}>Name: {user.name}</p>
+              <p style={{ margin: '0' }}>Matricule: {user.matricule}</p>
               <p style={{ margin: '0' }}>Major: Major</p>
 
             </div>
@@ -97,8 +90,8 @@ class StudentsResults extends Component {
             <div style={{ flex: 2, justifyContent: 'flex-end', textAlign: 'right', margin: '0', }}>
               <p style={{ margin: '0' }}>Department: computer Department</p>
               <p style={{ margin: '0' }}>semester: {semester}</p>
-              <p style={{ margin: '0' }}>year: 2019/2020</p>
-              <p style={{ margin: '0' }}>date: 
+              <p style={{ margin: '0' }}>year: {year}</p>
+              <p style={{ margin: '0' }}>date:
                 <Moment format="YYYY/MM/DD" />
               </p>
             </div>

@@ -12,50 +12,18 @@ class Marksheet extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.state = {
-      courses: [
-        {
-          Id: 1, code: 'CEF401', students: [
-            { matricule: 'FE17A090', },
-            { matricule: 'FE17A091', },
-            { matricule: 'FE17A092', },
-            { matricule: 'FE17A093', },
-          ],
-        },
-        {
-          Id: 2, code: 'CEF402', students: [
-            { matricule: 'FE17A094', },
-            { matricule: 'FE17A095', },
-            { matricule: 'FE17A096', },
-            { matricule: 'FE17A097', },
-          ]
-        },
-        {
-          Id: 3, code: 'CEF403', students: [
-            { matricule: 'FE17A098', },
-            { matricule: 'FE17A099', },
-            { matricule: 'FE17A081', },
-            { matricule: 'FE17A083', },
-          ]
-        },
-        {
-          Id: 4, code: 'CEF404', students: [
-            { matricule: 'FE17A070', },
-            { matricule: 'FE17A071', },
-            { matricule: 'FE17A072', },
-            { matricule: 'FE17A073', },
-          ]
-        },
-      ],
+      courses: [],
       selectedCourse: '',
       students: [],
 
       studentMarkSheet: [],
       loading: false,
+      success: false,
     }
   }
 
   componentDidMount() {
-    // this.getCourses()
+    this.getCourses()
   }
 
   selectedCourse = (e) => {
@@ -74,9 +42,10 @@ class Marksheet extends Component {
   };
 
   getCourses() {
+    this.props.loadingCourse(true)
+
     const { token } = this.props;
 
-    let proxyurl = "https://cors-anywhere.herokuapp.com/";
     let url = 'https://schoolman-ub.herokuapp.com/api/account/staff/courses';
     let fetchParams = {
       method: 'GET',
@@ -86,7 +55,7 @@ class Marksheet extends Component {
       },
       // body: JSON.stringify(bodyObj)
     }
-    fetch(proxyurl + url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => {
         const statusCode = response.status;
         const responseJson = response.json();
@@ -100,16 +69,22 @@ class Marksheet extends Component {
 
         if (statusCode === 200) {
           console.log(responseJson)
+          this.props.loadingCourse(false)
+          this.setState({ loading: false, courses: responseJson })
+
         } else if (statusCode === 401) {
           console.log(responseJson)
+          this.props.loadingCourse(false)
           this.setState({ loading: false })
         } else {
           console.log(responseJson)
+          this.props.loadingCourse(false)
           this.setState({ loading: false })
         }
       })
       .catch(err => {
         console.log(err)
+        this.props.loadingCourse(false)
       }).finally(fin => this.setState({ loading: false }))
   }
 
@@ -237,7 +212,7 @@ class Marksheet extends Component {
 
     let obj = { marks: studentMarkSheet };
     console.log(obj);
-    let url = 'https://schoolman-ub.herokuapp.com/api/account/staff/marks';
+    let url = 'https://schoolman-ub.herokuapp.com/api/account/staff/register/marks';
     let fetchParams = {
       method: 'POST',
       headers: {
@@ -260,7 +235,7 @@ class Marksheet extends Component {
 
         if (statusCode === 200) {
           console.log(responseJson)
-          this.setState({ loading: false })
+          this.setState({ loading: false, success: true })
         } else if (statusCode === 401) {
           console.log(responseJson)
           this.setState({ loading: false })
@@ -275,7 +250,7 @@ class Marksheet extends Component {
   }
 
   render() {
-    const { courses, studentMarkSheet, students, loading } = this.state;
+    const { courses, studentMarkSheet, students, loading, success } = this.state;
 
     return (
       <div className='marksheet shadow br3' id="divToPrint">
@@ -335,7 +310,7 @@ class Marksheet extends Component {
           </Table>
         </div>
 
-        <div style={{ padding: '2rem 2rem' }}>
+        <div style={{ padding: '2rem 2rem', display: 'flex'}}>
 
           {
             loading ?
@@ -344,6 +319,15 @@ class Marksheet extends Component {
               <Button onClick={() => this.submitMarks()} variant="primary" type="button">
                 submit marks
             </Button>
+          }
+
+          {
+            success ?
+              <div style={{ color: 'green', fontSize: '1.3rem', marginTop: '1rem', marginLeft: '1rem' }}>
+                successfully added students marks
+            </div>
+              :
+              null
           }
         </div>
 
