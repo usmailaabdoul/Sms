@@ -11,8 +11,9 @@ class RegisterCourse extends Component {
   constructor() {
     super();
     this.state = {
-      courses: [],
+      departments: [],
       selectedCourses: [],
+      selectedDepartment: [],
       obj: [],
       finished: false,
       loading: false,
@@ -21,21 +22,34 @@ class RegisterCourse extends Component {
   }
 
   componentDidMount() {
-    this.getCourses()
+    this.getDepartments()
   }
 
   selectedCourse = (e) => {
     let code = e.target.value;
 
-    const { selectedCourses, courses, obj } = this.state;
+    const { selectedCourses, selectedDepartment, obj } = this.state;
+    const { courses } = selectedDepartment;
 
     let newcourse = courses.find((c) => c.code === code);
+    console.log(newcourse);
     let newBodyObj = newcourse.code
     let newObj = [...obj, { code: newBodyObj }];
+    console.log(newObj);
 
     let newSelectedCourses = [...selectedCourses, newcourse]
     this.setState({ selectedCourses: newSelectedCourses, obj: newObj })
 
+  }
+
+  selectDepartment = (e) => {
+    let name = e.target.value;
+
+    const { departments } = this.state;
+
+    let selectedDepartment = departments.find((c) => c.name === name);
+
+    this.setState({ selectedDepartment });
   }
 
   removeCourse = (code) => {
@@ -54,12 +68,12 @@ class RegisterCourse extends Component {
     this.setState({ selectedCourses, obj })
   }
 
-  getCourses = () => {
+  getDepartments = () => {
     this.setState({ loadingCourse: true })
 
     const { token } = this.props;
 
-    let url = 'https://schoolman-ub.herokuapp.com/api/account/student/courses';
+    let url = 'https://schoolman-ub.herokuapp.com/api/account/student/courses/all';
     let fetchParams = {
       method: 'GET',
       headers: {
@@ -81,7 +95,7 @@ class RegisterCourse extends Component {
 
         if (statusCode === 200) {
           console.log(responseJson)
-          this.setState({ courses: responseJson, loadingCourse: false  })
+          this.setState({ departments: responseJson, loadingCourse: false })
         } else if (statusCode === 401) {
           console.log(responseJson)
           this.setState({ loading: false })
@@ -103,7 +117,7 @@ class RegisterCourse extends Component {
 
     let bodyObj = { codes: obj }
     console.log(bodyObj);
-    let url = 'https://schoolman-ub.herokuapp.com/api/account/student/courses';
+    let url = 'https://schoolman-ub.herokuapp.com/api/account/student/courses/register';
     let fetchParams = {
       method: 'POST',
       headers: {
@@ -156,7 +170,7 @@ class RegisterCourse extends Component {
   }
 
   render() {
-    const { courses, selectedCourses, finished, loading, loadingCourse } = this.state;
+    const { departments, selectedCourses, finished, loading, loadingCourse, selectedDepartment } = this.state;
 
     return (
       <div>
@@ -177,61 +191,81 @@ class RegisterCourse extends Component {
         </div>
         <div style={{ margin: '2rem 1rem 1rem 0rem', padding: '0rem 0rem 2rem 0rem', backgroundColor: '#fff', }}>
           <div style={{ display: 'flex', }}>
-            <Form.Group style={{ flex: 1.5, margin: '4.5rem 1rem' }}>
-              <Form.Control onChange={this.selectedCourse} as="select"
-                className='form' >
-                <option>select courses</option>
-                {courses.map((c) => {
-                  return (
-                    <option>{c.code}</option>
-                  )
-                })}
-              </Form.Control>
-            </Form.Group>
-
-            <div style={{ flex: 5, padding: '1rem' }} id="divToPrint">
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>Registered Courses</div>
-              <Table striped hover responsive>
-                <thead style={{ backgroundColor: '#cccccc', color: 'white', fontSize: '.8rem', margin: '0' }}>
-                  <tr>
-                    <th>S/n</th>
-                    <th>Course code</th>
-                    <th>Course title</th>
-                    <th>Credits</th>
-                    <th>remove</th>
-                  </tr>
-                </thead>
-                <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', fontSize: '.8rem' }}>
-                  {selectedCourses ? selectedCourses.map((s, rowIndex) => {
+            <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: '1' }}>
+              <div style={{ flex: '1' }} className='lable'>
+                Department
+                </div>
+              <Form.Group controlId="exampleForm.ControlSelect1"
+                style={{ flex: '2', margin: 0 }}>
+                <Form.Control onChange={this.selectDepartment} as="select" >
+                  <option>select your department</option>
+                  {departments.map((course) => {
                     return (
-                      <tr key={rowIndex} style={{ color: '#00000090', fontSize: '0.8rem' }}>
-                        <td>{s.id}</td>
-                        <td>{s.code}</td>
-                        <td>{s.title}</td>
-                        <td>{s.credits}</td>
-                        <td>
-                          <div onClick={() => this.removeCourse(s.code)} style={{ color: 'red' }} className='pointer grow'>
-                            delete course
-                        </div>
-                        </td>
-                      </tr>
+                      <option>{course.name}</option>
+                    )
+                  })}
+                </Form.Control>
+              </Form.Group>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '0.5rem 1rem', flex: '1' }}>
+              <div style={{ flex: '1' }} className='lable'>
+                courses
+                </div>
+              <Form.Group style={{ flex: 1.5, margin: '4.5rem 1rem' }}>
+                <Form.Control onChange={this.selectedCourse} as="select"
+                  className='form' >
+                  <option>choose courses</option>
+                  {selectedDepartment.courses ? selectedDepartment.courses.map((c) => {
+                    return (
+                      <option>{c.code}</option>
                     )
                   }) : null}
-                </tbody>
-              </Table>
-
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', marginTop: '1rem' }}>
-                {
-                  loading ?
-                    <Spinner animation="border" variant="primary" />
-                    :
-                    <Button onClick={() => this.RegisterCourseCourse()} variant="primary" type="button">
-                      Register courses
-              </Button>
-                }
-              </div>
+                </Form.Control>
+              </Form.Group>
             </div>
+          </div>
 
+          <div style={{ flex: 5, padding: '1rem' }} id="divToPrint">
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '1.5rem', marginBottom: '1rem' }}>Registered Courses</div>
+            <Table striped hover responsive>
+              <thead style={{ backgroundColor: '#cccccc', color: 'white', fontSize: '.8rem', margin: '0' }}>
+                <tr>
+                  <th>S/n</th>
+                  <th>Course code</th>
+                  <th>Course title</th>
+                  <th>Credits</th>
+                  <th>remove</th>
+                </tr>
+              </thead>
+              <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', fontSize: '.8rem' }}>
+                {selectedCourses ? selectedCourses.map((s, rowIndex) => {
+                  return (
+                    <tr key={rowIndex} style={{ color: '#00000090', fontSize: '0.8rem' }}>
+                      <td>{s.id}</td>
+                      <td>{s.code}</td>
+                      <td>{s.title}</td>
+                      <td>{s.credits}</td>
+                      <td>
+                        <div onClick={() => this.removeCourse(s.code)} style={{ color: 'red' }} className='pointer grow'>
+                          delete course
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                }) : null}
+              </tbody>
+            </Table>
+
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0rem 1rem', marginTop: '1rem' }}>
+              {
+                loading ?
+                  <Spinner animation="border" variant="primary" />
+                  :
+                  <Button onClick={() => this.RegisterCourseCourse()} variant="primary" type="button">
+                    Register courses
+              </Button>
+              }
+            </div>
           </div>
 
           <div style={{ marginLeft: '1rem', padding: '0rem 1rem', }}>

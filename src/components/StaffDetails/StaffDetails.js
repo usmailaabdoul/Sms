@@ -16,7 +16,9 @@ class StaffDetails extends Component {
 
     this.state = {
       staffs: [],
-      loading: 'false',
+      nature_of_job: 'teaching',
+      loading: false,
+      StafftoDisplay: []
     }
   }
 
@@ -26,19 +28,41 @@ class StaffDetails extends Component {
     this.getStaff(token);
   }
 
+  // selectednature_of_job = (e) => this.setState({ nature_of_job:  });
+
+  selectednature_of_job = (e) => {
+    const nature_of_job = e.target.value;
+
+    this.setState({nature_of_job})
+    const { staffs } = this.state;
+
+
+    if (staffs) {
+      let StafftoDisplay = []
+      if (nature_of_job === 'teaching') {
+        StafftoDisplay = staffs.teaching_staff;
+        this.setState({StafftoDisplay})
+
+      } else {
+        StafftoDisplay = staffs.non_teaching_staff;
+        this.setState({StafftoDisplay})
+
+      }
+      console.log(StafftoDisplay)
+    }
+  }
+
   getStaff(token) {
-    let url = 'https://schoolman-ub.herokuapp.com/api/admin/staff';
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/reports?role=staff&filter=nature_of_job';
     let fetchParams = {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
-      // headers: {'Content-Type': 'application/json'},
-      // body: JSON.stringify(obj)
     }
-    fetch( url, fetchParams)
+    fetch(url, fetchParams)
       .then(response => response.json())
       .then(res => {
-        console.log(res)
-        this.setState({ staffs: res.staff });
+        console.log(res.teaching_staff)
+        this.setState({ staffs: res, StafftoDisplay:  res.teaching_staff});
 
       })
       .catch(err => {
@@ -62,10 +86,23 @@ class StaffDetails extends Component {
   }
 
   render() {
-    const {staffs} = this.state;
+    const { StafftoDisplay, nature_of_job } = this.state;
+
     return (
       <div>
-
+        <div style={{ display: 'flex', alignItems: 'center', margin: '0.5rem 1rem', width: '45%' }}>
+          <div style={{ flex: '1' }} className='lable'>
+            staff nature of job
+                </div>
+          <Form.Group style={{ flex: 1.5, margin: '4.5rem 1rem' }}>
+            <Form.Control onChange={this.selectednature_of_job} as="select"
+              className='form' >
+              <option>choose nature of job</option>
+              <option>teaching</option>
+              <option>non-teaching</option>
+            </Form.Control>
+          </Form.Group>
+        </div>
         <div className='StudentsResults pa1 shadow-5' id="divToPrint">
           <div
             style={{
@@ -81,28 +118,17 @@ class StaffDetails extends Component {
               marginBottom: '2rem'
             }}
           >
-            <div style={{ flex: 2, justifyContent: 'flex-start', }}>
-              <p style={{ margin: '0' }}>Cameroon</p>
-              <p style={{ margin: '0' }}>University of Buea </p>
-              <p style={{ margin: '0' }}>The Registrer</p>
-
-            </div>
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
               <div className='logo'>
                 <span>
                   <img src={img} alt='onboarding image1' className='logoIcon' />
                 </span> SchoolMan
-          </div>
+              </div>
             </div>
-            <div style={{ flex: 2, justifyContent: 'flex-end', textAlign: 'right', margin: '0', }}>
-              <p style={{ margin: '0' }}>Staff Report</p>
-              <p style={{ margin: '0' }}>first semester</p>
-              <p style={{ margin: '0' }}>year: 2019/2020</p>
-              <p style={{ margin: '0' }}>date:  <Moment format="YYYY/MM/DD" /></p>
-            </div>
+
           </div>
-          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem', fontSize: '1.5rem'}}>
-            Staff report
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem', fontSize: '1.5rem' }}>
+            Staff report {nature_of_job}
           </div>
           <div>
             <Table striped responsive>
@@ -122,18 +148,18 @@ class StaffDetails extends Component {
                 </tr>
               </thead>
               <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', }}>
-                {staffs ? staffs.map((info, rowIndex) => {
+                {StafftoDisplay ? StafftoDisplay.map((info, rowIndex) => {
                   return (
                     <tr key={rowIndex} style={{ color: '#00000090', fontSize: '.8rem', }}>
                       <td>{info.id}</td>
                       <td>{info.matricule}</td>
                       <td>{info.name}</td>
                       <td>{info.email}</td>
-                      <td>{info.dob}</td>
+                      <td>{info.doa}</td>
+                      <td>{info.faculty}</td>
                       <td>{info.nature_of_job}</td>
                       <td>{info.basic_pay}</td>
-                      <td>{info.department}</td>
-                      <td>{info.faculty}</td>
+                      <td>{info.phone}</td>
                       <td>{info.gender}</td>
                       <td>{info.marital_status}</td>
                     </tr>

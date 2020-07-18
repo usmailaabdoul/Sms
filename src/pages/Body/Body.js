@@ -13,6 +13,8 @@ import Departments from '../Departments/Departments';
 
 import StaffDetails from '../../components/StaffDetails/StaffDetails'
 import StudentsDetails from '../../components/StudentsDetails/StudentsDetails'
+import ClassDetails from '../../components/ClassDetails/ClassDetails'
+import TeacherDetails from '../../components/TeacherDetails/TeacherDetails'
 
 import './body.scss';
 
@@ -66,11 +68,15 @@ class Body extends Component {
     if (route === 'Main') {
       return <Main/>;
     } 
+    
     if (route === 'StaffDetails') {
       return <StaffDetails/>;
     } 
     if (route === 'StudentsDetails' ) {
       return <StudentsDetails/>;
+    }
+    if (route === 'ClassDetails' ) {
+      return <ClassDetails/>;
     }
     if (route === '') {
       return null;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { } from "react-icons/fa";
 import { Form, Button, Table } from 'react-bootstrap';
+import { connect } from 'react-redux';
 
 import html2pdf from 'html2pdf.js';
 import img from '../../res/img/gradImg.png';
@@ -15,42 +16,60 @@ class ClassDetails extends Component {
     super();
 
     this.state = {
-      marks: [
-        { Id: 1, CA: '10', Exams: '10', courseCode: 'CEF 438', CourseTitle: 'Database', finalMark: '10', grade: '10' },
-        { Id: 2, CA: '10', Exams: '10', courseCode: 'CEF 442', CourseTitle: 'Inernet programming', finalMark: '10', grade: '10' },
-        { Id: 3, CA: '10', Exams: '10', courseCode: 'CEF 421', CourseTitle: 'Human comouter interface', finalMark: '10', grade: '10' },
-        { Id: 4, CA: '10', Exams: '10', courseCode: 'CEF 460', CourseTitle: 'Image processing', finalMark: '10', grade: '10' },
-        { Id: 5, CA: '10', Exams: '10', courseCode: 'CEF 460', CourseTitle: 'Image processing', finalMark: '10', grade: '10' },
-        { Id: 6, CA: '10', Exams: '10', courseCode: 'CEF 460', CourseTitle: 'Image processing', finalMark: '10', grade: '10' },
-      ],
+      
+      students: [],
       loading: 'false',
     }
   }
 
-  renderTable() {
-    const { marks } = this.state;
+  componentDidMount() {
+    this.getStudents();
+  }
 
-    return marks.map((mark, rowIndex) => {
+  getStudents() {
+    const { token } = this.props;
 
-      return (
-        <tr key={rowIndex} style={{ color: '#00000090' }}>
-          <td>{mark.Id}</td>
-          <td>{mark.courseCode}</td>
-          <td>{mark.CourseTitle}</td>
-          <td>{mark.CA}</td>
-          <td>{mark.Exams}</td>
-          <td>{mark.finalMark}</td>
-          <td>{mark.grade}</td>
-        </tr>
-      )
-    })
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/students';
+    let fetchParams = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+    }
+    fetch(url, fetchParams)
+      .then(response => {
+        const statusCode = response.status;
+        const responseJson = response.json();
+        return Promise.all([statusCode, responseJson]);
+      })
+      .then(res => {
+        console.log(res)
+        this.setState({ course: res });
+        const statusCode = res[0];
+        const responseJson = res[1];
+
+        if (statusCode === 200) {
+          console.log(responseJson)
+          this.setState({ students: responseJson.students, loadingCourse: false })
+        } else if (statusCode === 401) {
+          console.log(responseJson)
+          this.setState({ loading: false, students: responseJson })
+        } else {
+          console.log(responseJson)
+          this.setState({ loading: false })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      }).finally(fin => this.setState({ loading: false }))
   }
 
 
   printDocument() {
     var element = document.getElementById('divToPrint');
     var opt = {
-      filename: 'Class details.pdf',
+      filename: 'Staff report.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: {
         scale: 2, scrollY: 0, scrollX: 0,
@@ -63,7 +82,7 @@ class ClassDetails extends Component {
   }
 
   render() {
-
+    const {students} = this.state;
     return (
       <div >
 
@@ -82,24 +101,12 @@ class ClassDetails extends Component {
               marginBottom: '2rem'
             }}
           >
-            <div style={{ flex: 2, justifyContent: 'flex-start', }}>
-              <p style={{ margin: '0' }}>Name: student Name</p>
-              <p style={{ margin: '0' }}>Matricule: Matricule</p>
-              <p style={{ margin: '0' }}>Major: Major</p>
-
-            </div>
-            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center',}}>
+            <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
               <div className='logo'>
                 <span>
-                <img src={img} alt='onboarding image1' className='logoIcon'/>
-                  </span> SchoolMan
-          </div>
-            </div>
-            <div style={{ flex: 2, justifyContent: 'flex-end', textAlign: 'right', margin: '0', }}>
-              <p style={{ margin: '0' }}>Department: computer Department</p>
-              <p style={{ margin: '0' }}>semester: first semester</p>
-              <p style={{ margin: '0' }}>year: 2019/2020</p>
-              <p style={{ margin: '0' }}>date: <Moment format="YYYY/MM/DD" /></p>
+                  <img src={img} alt='onboarding image1' className='logoIcon' />
+                </span> SchoolMan
+              </div>
             </div>
           </div>
           <div>
@@ -107,16 +114,32 @@ class ClassDetails extends Component {
               <thead style={{ backgroundColor: '#cccccc', color: 'white' }}>
                 <tr>
                   <th>S/n</th>
-                  <th>Course code</th>
-                  <th>Course title</th>
-                  <th>CA/30</th>
-                  <th>Exams/70</th>
-                  <th>Final mark</th>
-                  <th>Grade</th>
+                  <th>Matricule</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Dob</th>
+                  <th>Department</th>
+                  <th>Faculty</th>
+                  <th>Gender</th>
+                  <th>Marital Status</th>
                 </tr>
               </thead>
-              <tbody style={{border: 'solid',borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', }}>
-                {this.renderTable()}
+              <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', }}>
+                {students ? students.map((info, rowIndex) => {
+                  return (
+                    <tr key={rowIndex} style={{ color: '#00000090', fontSize: '.8rem', }}>
+                      <td>{info.id}</td>
+                      <td>{info.matricule}</td>
+                      <td>{info.name}</td>
+                      <td>{info.email}</td>
+                      <td>{info.dob}</td>
+                      <td>{info.department}</td>
+                      <td>{info.faculty}</td>
+                      <td>{info.gender}</td>
+                      <td>{info.marital_status}</td>
+                    </tr>
+                  )
+                }) : null}
               </tbody>
             </Table>
           </div>
@@ -134,4 +157,11 @@ class ClassDetails extends Component {
   }
 }
 
-export default ClassDetails;
+const mapStateToProps = ({ token }) => {
+
+  return {
+    token: token.token
+  }
+}
+
+export default connect(mapStateToProps, null)(ClassDetails);

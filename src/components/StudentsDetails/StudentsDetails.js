@@ -26,7 +26,7 @@ class StudentsDetails extends Component {
   }
 
   getStudents(token) {
-    let url = 'https://schoolman-ub.herokuapp.com/api/admin/students';
+    let url = 'https://schoolman-ub.herokuapp.com/api/admin/reports?role=student&filter=namewise';
     let fetchParams = {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
@@ -80,24 +80,12 @@ class StudentsDetails extends Component {
               marginBottom: '2rem'
             }}
           >
-            <div style={{ flex: 2, justifyContent: 'flex-start', }}>
-              <p style={{ margin: '0' }}>Cameroon</p>
-              <p style={{ margin: '0' }}>University of Buea </p>
-              <p style={{ margin: '0' }}>The Registrer</p>
-
-            </div>
             <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
               <div className='logo'>
                 <span>
                   <img src={img} alt='onboarding image1' className='logoIcon' />
                 </span> SchoolMan
           </div>
-            </div>
-            <div style={{ flex: 2, justifyContent: 'flex-end', textAlign: 'right', margin: '0', }}>
-              <p style={{ margin: '0' }}>Staff Report</p>
-              <p style={{ margin: '0' }}>first semester</p>
-              <p style={{ margin: '0' }}>year: 2019/2020</p>
-              <p style={{ margin: '0' }}>date:  <Moment format="YYYY/MM/DD" /></p>
             </div>
           </div>
           <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1rem', fontSize: '1.5rem'}}>
@@ -108,12 +96,12 @@ class StudentsDetails extends Component {
               <thead style={{ backgroundColor: '#cccccc', color: 'white', fontSize: '.8rem', }}>
                 <tr>
                   <th>S/n</th>
+                  <th>Date of admission</th>
                   <th>Matricule</th>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Dob</th>
-                  <th>Department</th>
-                  <th>Faculty</th>
+                  <th>Date of birth</th>
+                  <th>phone</th>
                   <th>Gender</th>
                   <th>Marital Status</th>
                 </tr>
@@ -123,12 +111,12 @@ class StudentsDetails extends Component {
               return (
                 <tr key={rowIndex} style={{ color: '#00000090', fontSize: '.8rem', }}>
                   <td>{info.id}</td>
+                  <td>{info.doa}</td>
                   <td>{info.matricule}</td>
                   <td>{info.name}</td>
                   <td>{info.email}</td>
                   <td>{info.dob}</td>
-                  <td>{info.department}</td>
-                  <td>{info.faculty}</td>
+                  <td>{info.phone}</td>
                   <td>{info.gender}</td>
                   <td>{info.marital_status}</td>
                 </tr>

@@ -369,12 +369,12 @@ const AddStaff = (props) => {
                 </div>
           <Form.Group controlId="exampleForm.ControlSelect1"
             style={{ flex: '2', margin: 0 }}>
-            <Form.Control
-              onChange={job}
-              type="text"
-              placeholder=" "
-              className='form'
-            />
+            <Form.Control onChange={job} as="select"
+              className='form' >
+              <option>choose</option>
+              <option>teaching</option>
+              <option>non-teaching</option>
+            </Form.Control>
           </Form.Group>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 1rem', flex: 1 }}>

@@ -10,7 +10,8 @@ import {
   FaWpforms,
   FaAngleDown,
   FaFileSignature,
-  FaSchool
+  FaSchool,
+  FaUserPlus
 } from "react-icons/fa";
 import { GiBookshelf } from 'react-icons/gi'
 import { Col, Image } from 'react-bootstrap';
@@ -144,7 +145,7 @@ class Sidebar extends Component {
             <div
               className='pointer'
               onClick={() => {
-                this.setState({report: ! this.state.report})
+                this.setState({ report: !this.state.report })
               }}
               style={{ color: this.state.report ? '#00b5cc' : '#000000ad', display: 'flex', justifyContent: 'space-between' }}>
               <div>
@@ -194,13 +195,13 @@ class Sidebar extends Component {
                       className='pointer' style={{ marginLeft: '20px', color: '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
                       Students details according to names
                       </div> */}
-                    <div onClick={() => {
+                    {/* <div onClick={() => {
                       this.handleRoute('TeacherDetails')
                     }}
                       className='pointer'
                       style={{ marginLeft: '20px', color: route === 'TeacherDetails' ? '#00b5cc' : '#000000ad', marginBottom: '10px', borderBottom: '1px solid #ccccccad', marginTop: '5px' }}>
-                      Teacher report based on joining date
-                      </div>
+                      Staff report based on joining date
+                      </div> */}
                   </div>
                   :
                   null
@@ -283,7 +284,7 @@ class Sidebar extends Component {
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', marginLeft: '1rem' }}>
             <div
-              onClick={() => showSettingsModal()}
+              onClick={() => showLogoutModal()}
               style={{ marginRight: '2rem', padding: '5px 10px', fontSize: '18px', color: 'white', borderRadius: '5px' }}
               className='grow shadow pointer'>
               <FaPowerOff /></div>
@@ -292,11 +293,16 @@ class Sidebar extends Component {
               style={{ marginRight: '2rem', padding: '5px 10px', fontSize: '18px', color: 'white', borderRadius: '5px' }}
               className='grow shadow pointer'>
               <FaUser /></div>
-            <div
-              onClick={() => showLogoutModal()}
-              style={{ marginRight: '2rem', padding: '5px 10px', fontSize: '18px', color: 'white', borderRadius: '5px' }}
-              className='grow shadow pointer'>
-              <FaCog /></div>
+            {
+              role === 'admin' ?
+                <div
+                  onClick={() => showSettingsModal()}
+                  style={{ marginRight: '2rem', padding: '5px 10px', fontSize: '18px', color: 'white', borderRadius: '5px' }}
+                  className='grow shadow pointer'>
+                  <FaUserPlus /></div>
+                : null
+            }
+
           </div>
         </div>
 

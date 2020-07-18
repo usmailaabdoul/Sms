@@ -174,16 +174,18 @@ class Main extends Component {
         </div>
 
         <div style={{ margin: '2rem .5rem', display: 'flex' }}>
-          <div style={{ flex: 1, width: '25%', height: '10px' }}>
+          <div style={{ width: '100%', }}>
             <StudentTable students={students} />
           </div>
-          <div style={{ flex: 1, width: '25%', marginLeft: '.7rem' }}>
+        </div>
+        <div style={{ margin: '2rem .5rem', display: 'flex' }}>
+          <div style={{ width: '100%', }}>
             <StaffTable staffs={staffs} />
           </div>
         </div>
 
         <div style={{ margin: '2rem .5rem', display: 'flex' }}>
-          <div style={{ flex: 1,  height: '10px' }}>
+          <div style={{ flex: 1, }}>
             <FacultyTable faculties={faculties} />
           </div>
           <div style={{ flex: 1, marginLeft: '.7rem' }}>
@@ -192,10 +194,10 @@ class Main extends Component {
         </div>
 
         <div style={{ margin: '2rem .5rem', display: 'flex' }}>
-          <div style={{  width: '65%', height: '10px' }}>
+          <div style={{  width: '100%', }}>
             <CoursesTable courses={courses} />
           </div>
-          <div style={{  height: '10px' }}>
+          <div style={{}}>
           </div>
         </div>
       </div>
@@ -228,11 +230,12 @@ const StudentTable = (props) => {
               <th>Matricule</th>
               <th>Name</th>
               <th>Email</th>
-              <th>Dob</th>
+              <th>Date of admission</th>
               <th>Department</th>
               <th>Faculty</th>
               <th>Gender</th>
               <th>Marital Status</th>
+              <th>Dob</th>
             </tr>
           </thead>
           <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', fontSize: '.8rem' }}>
@@ -243,11 +246,12 @@ const StudentTable = (props) => {
                   <td>{info.matricule}</td>
                   <td>{info.name}</td>
                   <td>{info.email}</td>
-                  <td>{info.dob}</td>
+                  <td>{info.doa}</td>
                   <td>{info.department}</td>
                   <td>{info.faculty}</td>
                   <td>{info.gender}</td>
                   <td>{info.marital_status}</td>
+                  <td>{info.dob}</td>
                 </tr>
               )
             }) : null}
