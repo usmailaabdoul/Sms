@@ -17,6 +17,7 @@ class TeacherDetails extends Component {
     this.state = {
       staffs: {},
       loading: false,
+      date: ''
     }
   }
 
@@ -49,6 +50,7 @@ class TeacherDetails extends Component {
         if (statusCode === 200) {
           console.log(responseJson)
           this.setState({ staffs: responseJson, loading: false })
+          this.renderTable()
         } else if (statusCode === 401) {
           console.log(responseJson)
           this.setState({ loading: false })
@@ -65,16 +67,16 @@ class TeacherDetails extends Component {
 
   renderTable() {
     const { staffs } = this.state;
-    const {staff_per_date} = staffs;
-    if (staff_per_date) {
-      console.log(staff_per_date);
-      staff_per_date.map((dates) => {
-        console.log('dates', dates[0])
-        // return (
-        //   dates.map((staff) => console.log(staff))
-        // )
-      })
+    console.log(staffs);
 
+    if (staffs) {
+      Object.entries(staffs).map((date, key) => {
+        console.log(date)
+
+        return (
+          this.setState({ date })
+        )
+      });
     }
     // return marks.map((mark, rowIndex) => {
 
@@ -108,10 +110,10 @@ class TeacherDetails extends Component {
   }
 
   render() {
-
+    const {date} = this.state;
+    console.log(date)
     return (
-      <div >
-
+      <div>
         <div className='StudentsResults' id="divToPrint">
           <div
             style={{
@@ -149,8 +151,7 @@ class TeacherDetails extends Component {
                 </tr>
               </thead>
               <tbody style={{ border: 'solid', borderBottomWidth: '1px', borderTopWidth: '0px', borderLeftWidth: '0px', borderRightWidth: '0px', borderColor: '#cccccc', }}>
-                {this.renderTable()}
-               
+                {/* {this.renderTable()} */}
               </tbody>
             </Table>
           </div>
@@ -158,7 +159,7 @@ class TeacherDetails extends Component {
 
         <div style={{ padding: '2rem 2rem', margin: '0rem 0.5rem' }}>
           <Button onClick={() => this.printDocument()} variant="primary" type="button">
-            Download results
+            Download report
             </Button>
         </div>
 

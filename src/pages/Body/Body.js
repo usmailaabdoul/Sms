@@ -78,6 +78,9 @@ class Body extends Component {
     if (route === 'ClassDetails' ) {
       return <ClassDetails/>;
     }
+    // if (route === 'TeacherDetails' ) {
+    //   return <TeacherDetails/>;
+    // }
     if (route === '') {
       return null;
     }
